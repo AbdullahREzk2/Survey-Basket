@@ -27,6 +27,7 @@ namespace SurveyBasket.API
             app.UseHttpsRedirection();
             app.UseAuthorization();
             app.MapControllers();
+            app.UseExceptionHandler();
             app.Run();
         }
     }

@@ -1,0 +1,130 @@
+﻿namespace SurveyBasket.BLL.Service;
+public class QuestionService : IQuestionService
+{
+    private readonly IQuestionRepository _questionrepository;
+    private readonly IPollRepository _pollrepository;
+
+    public QuestionService(IQuestionRepository questionRepository,IPollRepository pollRepository)
+    {
+        _questionrepository = questionRepository;
+        _pollrepository = pollRepository;
+    }
+    public async Task<Result<IReadOnlyList<QuestionResponseDTO>>>GetAllQuestionsForPollAsync(int pollId, CancellationToken cancellationToken)
+    {
+        var isPollExist = await _pollrepository.getPollByIdAsync(pollId,cancellationToken);
+
+        if (isPollExist == null)
+            return Result.Failure<IReadOnlyList<QuestionResponseDTO>>(PollErrors.PollNotFound);
+
+        var questions = await _questionrepository.GetAllQuestionsForPollAsync(pollId, cancellationToken);
+
+        if (!questions.Any())
+            return Result.Failure<IReadOnlyList<QuestionResponseDTO>>(
+                QuestionErrors.QuestionNotFound);
+
+        var response = questions.Adapt<IReadOnlyList<QuestionResponseDTO>>();
+
+        return Result.Success(response);
+    }
+    public async Task<Result<QuestionResponseDTO>>GetQuestionByIdAsync(int pollId, int questionId, CancellationToken cancellationToken)
+    {
+        var isPollExist = await _pollrepository.getPollByIdAsync(pollId, cancellationToken);
+
+        if (isPollExist is null)
+            return Result.Failure<QuestionResponseDTO>(PollErrors.PollNotFound);
+
+        var question = await _questionrepository.GetQuestionByIdAsync(pollId, questionId, cancellationToken);
+
+        if (question is null)
+            return Result.Failure<QuestionResponseDTO>(QuestionErrors.QuestionNotFound);
+
+        var response = question.Adapt<QuestionResponseDTO>();
+
+        return Result.Success(response);
+    }
+    public async Task<Result<QuestionResponseDTO>> AddQuestionAsync(int pollId,QuestionRequestDTO question,CancellationToken cancellationToken)
+    {
+        var poll = await _pollrepository
+            .getPollByIdAsync(pollId, cancellationToken);
+
+        if (poll is null)
+            return Result.Failure<QuestionResponseDTO>(
+                PollErrors.PollNotFound);
+
+        var exists = await _questionrepository
+            .searchQuestion(pollId, question.Content, cancellationToken);
+
+        if (exists)
+            return Result.Failure<QuestionResponseDTO>(
+                QuestionErrors.QuestionAlreadyExists);
+
+        var questionEntity = question.Adapt<Question>();
+        questionEntity.PollId = pollId;
+        questionEntity.isActive = true;
+        questionEntity.answers = question.Answers
+            .Select(a => new Answer { Content = a })
+            .ToList();
+
+        var createdQuestion =
+            await _questionrepository.AddQuestionAsync(questionEntity, cancellationToken);
+
+        return createdQuestion is not null
+            ? Result.Success(createdQuestion.Adapt<QuestionResponseDTO>())
+            : Result.Failure<QuestionResponseDTO>(
+                QuestionErrors.QuestionCreationFailed);
+    }
+    public async Task<Result> UpdateQuestionAsync(int pollId,int questionId,QuestionRequestDTO question,CancellationToken cancellationToken)
+    {
+        var questionEntity = await _questionrepository
+            .GetQuestionByIdAsync(pollId, questionId, cancellationToken);
+
+        if (questionEntity is null)
+            return Result.Failure(QuestionErrors.QuestionNotFound);
+
+        questionEntity.Content = question.Content;
+
+        var incomingAnswers = question.Answers
+            .Select(a => a.Trim())
+            .Where(a => !string.IsNullOrWhiteSpace(a))
+            .ToHashSet(StringComparer.OrdinalIgnoreCase);
+
+
+        // 2️⃣ Deactivate removed answers
+        foreach (var answer in questionEntity.answers)
+        {
+            if (!incomingAnswers.Contains(answer.Content))
+            {
+                answer.isActive = false;
+            }
+        }
+
+        // 3️⃣ Activate existing answers or add new ones
+        foreach (var incomingAnswer in incomingAnswers)
+        {
+            var existingAnswer = questionEntity.answers
+                .FirstOrDefault(a =>
+                    a.Content.Equals(incomingAnswer, StringComparison.OrdinalIgnoreCase));
+
+            if (existingAnswer is not null)
+            {
+                existingAnswer.isActive = true;
+            }
+            else
+            {
+                questionEntity.answers.Add(new Answer
+                {
+                    Content = incomingAnswer,
+                    isActive = true
+                });
+            }
+        }
+
+        await _questionrepository.UpdateQuestionAsync(questionEntity, cancellationToken);
+
+        return Result.Success();
+    }
+
+}
+
+
+

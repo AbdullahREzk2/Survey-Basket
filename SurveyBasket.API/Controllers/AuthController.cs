@@ -16,10 +16,10 @@ public class AuthController : ControllerBase
     [HttpPost("login")]
     public async Task<IActionResult> Login([FromBody] loginRequestDTO request,CancellationToken cancellationToken)
     {
-        var result = await _authservice.LoginAsync(request.Email, request.Password,cancellationToken);
-        if (result is null)
-            return Unauthorized(new { Message = "Invalid email or password." });
-        return Ok(result);
+        var authResult = await _authservice.LoginAsync(request.Email, request.Password,cancellationToken);
+        return authResult.IsSuccess 
+            ? Ok(authResult.Value) 
+            : authResult.ToProblem(statuscode: StatusCodes.Status400BadRequest);
     }
     #endregion
 
@@ -28,9 +28,11 @@ public class AuthController : ControllerBase
     public async Task<IActionResult> Refresh([FromBody] refreshTokenRequest request,CancellationToken cancellationToken)
     {
         var result = await _authservice.GetRefreshTokenAsync(request.Token, request.RefreshToken,cancellationToken);
-        if (result is null)
-            return Unauthorized(new { Message = "Invalid token. " });
-        return Ok(result);
+
+        return result.IsSuccess
+            ? Ok(result)
+            : result.ToProblem(statuscode:StatusCodes.Status401Unauthorized);
+
     }
     #endregion
 
@@ -40,10 +42,9 @@ public class AuthController : ControllerBase
     {
         var isRevoked = await _authservice.RevokeRefreshTokenAsync(request.Token, request.RefreshToken, cancellationToken);
 
-        if (isRevoked)
-            return Ok();
-
-        return BadRequest("Operation Falied !");
+        return isRevoked.IsSuccess
+            ? Ok()
+            :isRevoked.ToProblem(statuscode:StatusCodes.Status400BadRequest);
     }
     #endregion
 

@@ -26,4 +26,7 @@ global using Microsoft.AspNetCore.Identity;
 global using SurveyBasket.DAL.Entities;
 global using System.Security.Claims;
 global using SurveyBasket.Shared;
+global using SurveyBasket.BLL.Abstractions;
+global using SurveyBasket.BLL.Errors;
+global using SurveyBasket.BLL.Contracts.Questions;
 

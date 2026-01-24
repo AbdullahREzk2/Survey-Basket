@@ -31,6 +31,7 @@
             // =========================
             #region
             services.AddScoped<IPollRepository, PollRepository>();
+            services.AddScoped<IQuestionRepository, QuestionRepository>();
             #endregion
 
             // =========================
@@ -42,6 +43,7 @@
             services.AddScoped<IAuthService, AuthService>();
             services.AddSingleton<IJwtProvider, JwtProvider>();
             services.AddScoped<ICurrentUserService, CurrentUserService>();
+            services.AddScoped<IQuestionService, QuestionService>();
             #endregion
 
             // =========================
@@ -95,7 +97,13 @@
                 });
 
             #endregion
-
+            // =========================
+            // Exception Handling
+            // =========================
+            #region
+            services.AddExceptionHandler<GlobalExceptionsHandler>();
+            services.AddProblemDetails();
+            #endregion
 
             return services;
         

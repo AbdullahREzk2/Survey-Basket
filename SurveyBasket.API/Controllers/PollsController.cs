@@ -16,12 +16,11 @@ public class PollsController : ControllerBase
     [HttpGet("getAllPolls")]
     public async Task<IActionResult> GetAllPolls(CancellationToken cancellationToken)
     {
-        var polls = await _pollservice.getAllPollsAsync(cancellationToken);
-        if(polls == null || !polls.Any())
-        {
-            return NotFound("No polls found.");
-        }
-        return Ok(polls);
+        var pollsResult = await _pollservice.getAllPollsAsync(cancellationToken);
+
+        return pollsResult.IsSuccess
+            ? Ok(pollsResult.Value) 
+            : pollsResult.ToProblem(statuscode:StatusCodes.Status404NotFound);
     }
     #endregion
 
@@ -29,12 +28,11 @@ public class PollsController : ControllerBase
     [HttpGet("getPollById/{pollId}")]
     public async Task<IActionResult> GetPollById(int pollId, CancellationToken cancellationToken)
     {
-        var poll = await _pollservice.getPollByIdAsync(pollId, cancellationToken);
-        if(poll == null)
-        {
-            return NotFound($"Poll with ID {pollId} not found.");
-        }
-        return Ok(poll);
+        var pollResult = await _pollservice.getPollByIdAsync(pollId, cancellationToken);
+      
+        return pollResult.IsSuccess 
+            ? Ok(pollResult.Value) 
+            : pollResult.ToProblem(statuscode:StatusCodes.Status404NotFound);
     }
     #endregion
 
@@ -42,13 +40,11 @@ public class PollsController : ControllerBase
     [HttpPost("addPoll")]
     public async Task<IActionResult> AddPoll([FromBody] PollRequestDTO pollRequest, CancellationToken cancellationToken)
     {
-        
         var createdPoll = await _pollservice.AddPollAsync(pollRequest, cancellationToken);
 
-        if(createdPoll == null)
-            return BadRequest("Failed to create poll.");
-
-        return CreatedAtAction(nameof(GetPollById), new { pollId = createdPoll.PollId }, createdPoll);
+        return createdPoll.IsSuccess 
+            ? CreatedAtAction(nameof(GetPollById), new { pollId = createdPoll.Value.PollId }, createdPoll.Value)
+            : createdPoll.ToProblem(statuscode: StatusCodes.Status400BadRequest);
     }
     #endregion
 
@@ -57,11 +53,10 @@ public class PollsController : ControllerBase
     public async Task<IActionResult> UpdatePoll(int pollId, [FromBody] PollRequestDTO pollRequest, CancellationToken cancellationToken)
     {
         var updatedPoll = await _pollservice.UpdatePollAsync(pollId, pollRequest, cancellationToken);
-        if(updatedPoll == null)
-        {
-            return NotFound($"Poll with ID {pollId} not found.");
-        }
-        return Ok(updatedPoll);
+            
+        return updatedPoll.IsSuccess 
+            ? Ok(updatedPoll.Value) 
+            : updatedPoll.ToProblem(statuscode:StatusCodes.Status404NotFound);
     }
     #endregion
 
@@ -70,11 +65,10 @@ public class PollsController : ControllerBase
     public async Task<IActionResult> DeletePoll(int pollId, CancellationToken cancellationToken)
     {
         var isDeleted = await _pollservice.DeletePollAsync(pollId, cancellationToken);
-        if(!isDeleted)
-        {
-            return NotFound($"Poll with ID {pollId} not found.");
-        }
-        return NoContent();
+       
+        return isDeleted.IsSuccess 
+            ? NoContent() 
+            : isDeleted.ToProblem(statuscode:StatusCodes.Status404NotFound);
     }
     #endregion
 

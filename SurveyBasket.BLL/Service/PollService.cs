@@ -10,42 +10,66 @@ public class PollService : IPollService
         _mapper = mapper;
     }
 
-    public async Task<IEnumerable<PollResponseDTO>> getAllPollsAsync(CancellationToken cancellationToken)
+    public async Task<Result<IEnumerable<PollResponseDTO>>> getAllPollsAsync(CancellationToken cancellationToken)
     {
         var polls = await _pollrepository.getAllPollsAsync(cancellationToken);
-        return _mapper.Map<IEnumerable<PollResponseDTO>>(polls);
+
+        var response = _mapper.Map<IEnumerable<PollResponseDTO>>(polls);
+
+        return response is not null
+            ?Result.Success(response)
+            :Result.Failure<IEnumerable<PollResponseDTO>>(PollErrors.PollNotFound);
     }
-    public async Task<PollResponseDTO> getPollByIdAsync(int pollId, CancellationToken cancellationToken)
+    public async Task<Result<PollResponseDTO>> getPollByIdAsync(int pollId, CancellationToken cancellationToken)
     {
         var poll = await _pollrepository.getPollByIdAsync(pollId,cancellationToken);
-        return _mapper.Map<PollResponseDTO>(poll);
+
+        var response = _mapper.Map<PollResponseDTO>(poll);
+
+        return response is not null
+            ?Result.Success(response)
+            :Result.Failure<PollResponseDTO>(PollErrors.PollNotFound);
     }
-    public async Task<PollResponseDTO?> AddPollAsync(PollRequestDTO poll, CancellationToken cancellationToken)
+    public async Task<Result<PollResponseDTO>> AddPollAsync(PollRequestDTO poll, CancellationToken cancellationToken)
     {
         var pollEntity = _mapper.Map<Poll>(poll);  
 
         var ifExist = await _pollrepository.SearchPollByTitleAsync(pollEntity.Title, cancellationToken);
         if(ifExist)
-            return null;
+            return Result.Failure<PollResponseDTO>(PollErrors.PollAlreadyExists);
 
         var AddedPoll = await _pollrepository.AddPollAsync(pollEntity, cancellationToken);
 
-        return _mapper.Map<PollResponseDTO>(AddedPoll);
+        return AddedPoll is not null
+            ? Result.Success(_mapper.Map<PollResponseDTO>(AddedPoll))
+            : Result.Failure<PollResponseDTO>(PollErrors.PollCreationFailed);
+
     }
-    public async Task<PollResponseDTO?> UpdatePollAsync(int pollId, PollRequestDTO poll,CancellationToken cancellationToken)
+    public async Task<Result<PollResponseDTO>> UpdatePollAsync(int pollId, PollRequestDTO poll,CancellationToken cancellationToken)
     {
         var pollEntity = _mapper.Map<Poll>(poll);
 
+        var ifExist = await _pollrepository.getPollByIdAsync(pollId, cancellationToken);
+        if (ifExist is null)
+            return Result.Failure<PollResponseDTO>(PollErrors.PollNotFound);
+
         var updatedPoll = await _pollrepository.UpdatePollAsync(pollId, pollEntity,cancellationToken);
 
-        if(updatedPoll == null)
-            return null;
-        
-        return _mapper.Map<PollResponseDTO>(updatedPoll);
+        return updatedPoll is not null
+            ? Result.Success(_mapper.Map<PollResponseDTO>(updatedPoll))
+            : Result.Failure<PollResponseDTO>(PollErrors.PollUPdateFailed);
     }
-    public async Task<bool> DeletePollAsync(int pollId,CancellationToken cancellationToken)
+    public async Task<Result> DeletePollAsync(int pollId,CancellationToken cancellationToken)
     {
-        return await _pollrepository.DeletePollAsync(pollId, cancellationToken);
+        var pollExist = await _pollrepository.getPollByIdAsync(pollId, cancellationToken);
+        if (pollExist is null)
+            return Result.Failure(PollErrors.PollNotFound);
+
+        var response = await _pollrepository.DeletePollAsync(pollId, cancellationToken);
+        if(response)
+          return Result.Success();
+
+        return Result.Failure(PollErrors.PollDeletionFailed);
     }
 
 
