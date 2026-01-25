@@ -9,4 +9,5 @@ public class Poll:AuditableEntity
     public DateOnly endDate { get; set; }
 
     public ICollection<Question> Questions { get; set; } = [];
+    public ICollection<Vote> Votes { get; set; } = [];
 }
