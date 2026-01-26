@@ -32,6 +32,7 @@
             #region
             services.AddScoped<IPollRepository, PollRepository>();
             services.AddScoped<IQuestionRepository, QuestionRepository>();
+            services.AddScoped<IVoteRepository, VoteRepository>();
             #endregion
 
             // =========================
@@ -104,6 +105,8 @@
             services.AddExceptionHandler<GlobalExceptionsHandler>();
             services.AddProblemDetails();
             #endregion
+
+            
 
             return services;
         

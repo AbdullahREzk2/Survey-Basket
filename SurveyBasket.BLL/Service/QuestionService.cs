@@ -3,12 +3,15 @@ public class QuestionService : IQuestionService
 {
     private readonly IQuestionRepository _questionrepository;
     private readonly IPollRepository _pollrepository;
+    private readonly IVoteRepository _voterepository;
 
-    public QuestionService(IQuestionRepository questionRepository,IPollRepository pollRepository)
+    public QuestionService(IQuestionRepository questionRepository,IPollRepository pollRepository,IVoteRepository voteRepository)
     {
         _questionrepository = questionRepository;
         _pollrepository = pollRepository;
+        _voterepository = voteRepository;
     }
+
     public async Task<Result<IReadOnlyList<QuestionResponseDTO>>>GetAllQuestionsForPollAsync(int pollId, CancellationToken cancellationToken)
     {
         var isPollExist = await _pollrepository.getPollByIdAsync(pollId,cancellationToken);
@@ -25,6 +28,24 @@ public class QuestionService : IQuestionService
         var response = questions.Adapt<IReadOnlyList<QuestionResponseDTO>>();
 
         return Result.Success(response);
+    }
+    public async Task<Result<IEnumerable<QuestionResponseDTO>>> GetAvailableQuestionsAsync(int pollId, string userId, CancellationToken cancellationToken)
+    {
+        var hasVote = await _voterepository.HasUserVotedAsync(pollId, userId, cancellationToken);
+
+        if (hasVote)
+            return Result.Failure<IEnumerable<QuestionResponseDTO>>(VoteErrors.UserAlreadyVoted);
+
+        var isPollExist = await _pollrepository.getAvailblePollAsync(pollId, cancellationToken);
+
+        if (isPollExist is null)
+            return Result.Failure<IEnumerable<QuestionResponseDTO>>(PollErrors.PollNotFound);
+
+        var questions = await _questionrepository.GetAllQuestionsForPollAsync(pollId, cancellationToken);
+
+        var questionResponses = questions.Adapt<IEnumerable<QuestionResponseDTO>>();
+
+        return Result.Success(questionResponses);
     }
     public async Task<Result<QuestionResponseDTO>>GetQuestionByIdAsync(int pollId, int questionId, CancellationToken cancellationToken)
     {
@@ -123,6 +144,16 @@ public class QuestionService : IQuestionService
 
         return Result.Success();
     }
+    public async Task<Result> activeToggleQuestion(int pollId, int questionId, CancellationToken cancellationToken)
+    {
+        var isUpdated = await _questionrepository.activeToggleQuestion(pollId, questionId, cancellationToken);
+        
+        if (isUpdated)
+            return Result.Success();
+
+        return Result.Failure(QuestionErrors.QuestionActivationFailed);
+    }
+
 
 }
 

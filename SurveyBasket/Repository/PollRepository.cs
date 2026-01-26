@@ -14,6 +14,29 @@ public class PollRepository : IPollRepository
 
         return polls;
     }
+    public async Task<IEnumerable<Poll>> getAvailblePollsAsync(CancellationToken cancellationToken)
+    {
+        return await _dbcontext.Polls
+            .Where (
+            p=>p.isPublished 
+            && p.startDate <= DateOnly.FromDateTime(DateTime.UtcNow) 
+            && p.endDate >=DateOnly.FromDateTime (DateTime.UtcNow)
+            )
+            .AsNoTracking()
+            .ToListAsync(cancellationToken);
+    }
+    public async Task<Poll?> getAvailblePollAsync(int pollId, CancellationToken cancellationToken)
+    {
+        return await _dbcontext.Polls
+            .Where(
+            p => p.PollId == pollId 
+            && p.isPublished 
+            && p.startDate <= DateOnly.FromDateTime(DateTime.UtcNow) 
+            && p.endDate >= DateOnly.FromDateTime(DateTime.UtcNow)
+            )
+            .AsNoTracking()
+            .FirstOrDefaultAsync(cancellationToken);
+    }
     public async Task<Poll> getPollByIdAsync(int pollId,CancellationToken cancellationToken)
     {
         var poll = await _dbcontext.Polls
@@ -63,6 +86,19 @@ public class PollRepository : IPollRepository
         return await _dbcontext.Polls
             .AsNoTracking()
             .AnyAsync(p => p.Title == title, cancellationToken);
+    }
+    public async Task<bool> publishToggle(int pollId, CancellationToken cancellationToken)
+    {
+        var poll = await _dbcontext.Polls.FirstOrDefaultAsync(p => p.PollId == pollId, cancellationToken);
+
+        if (poll == null)
+            return false;
+
+        poll.isPublished = !poll.isPublished;
+
+        await _dbcontext.SaveChangesAsync(cancellationToken);
+        return true;
+
     }
 
 }

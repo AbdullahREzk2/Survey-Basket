@@ -11,4 +11,6 @@ public static class QuestionErrors
         new("Question.UpdateFailed", "Failed to update Question");
     public static Error QuestionDeletionFailed =
         new("Question.DeletionFailed", "Failed to delete Question");
+    public static Error QuestionActivationFailed =
+        new("Question.ActivationFailed", "Failed to activate/deactivate Question");
 }

@@ -24,6 +24,18 @@ public class PollsController : ControllerBase
     }
     #endregion
 
+    #region get Available Polls
+    [HttpGet("getAvailablePolls")]
+    public async Task<IActionResult> GetAvailablePolls(CancellationToken cancellationToken)
+    {
+        var pollsResult = await _pollservice.getAvailblePollsAsync(cancellationToken);
+
+        return pollsResult.IsSuccess
+            ? Ok(pollsResult.Value) 
+            : pollsResult.ToProblem(statuscode:StatusCodes.Status404NotFound);
+    }
+    #endregion
+
     #region getPollById
     [HttpGet("getPollById/{pollId}")]
     public async Task<IActionResult> GetPollById(int pollId, CancellationToken cancellationToken)
@@ -72,5 +84,16 @@ public class PollsController : ControllerBase
     }
     #endregion
 
+    #region publishPoll
+    [HttpPost("publishPoll/{pollId}")]
+    public async Task<IActionResult> PublishPoll(int pollId, CancellationToken cancellationToken)
+    {
+        var publishedPoll = await _pollservice.publishToggle(pollId, cancellationToken);
+       
+        return publishedPoll.IsSuccess 
+            ? Ok() 
+            : publishedPoll.ToProblem(statuscode:StatusCodes.Status404NotFound);
+    }
+    #endregion
 
 }

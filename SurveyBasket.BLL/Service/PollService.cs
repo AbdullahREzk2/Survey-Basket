@@ -20,6 +20,16 @@ public class PollService : IPollService
             ?Result.Success(response)
             :Result.Failure<IEnumerable<PollResponseDTO>>(PollErrors.PollNotFound);
     }
+    public async Task<Result<IEnumerable<PollResponseDTO>>> getAvailblePollsAsync(CancellationToken cancellationToken)
+    {
+        var polls = await _pollrepository.getAvailblePollsAsync(cancellationToken);
+
+        var response = polls.Adapt<IEnumerable<PollResponseDTO>>();
+
+        return response is not null
+            ? Result.Success(response)
+            : Result.Failure<IEnumerable<PollResponseDTO>>(PollErrors.PollNotFound);
+    }
     public async Task<Result<PollResponseDTO>> getPollByIdAsync(int pollId, CancellationToken cancellationToken)
     {
         var poll = await _pollrepository.getPollByIdAsync(pollId,cancellationToken);
@@ -71,7 +81,14 @@ public class PollService : IPollService
 
         return Result.Failure(PollErrors.PollDeletionFailed);
     }
+    public async Task<Result> publishToggle(int pollId, CancellationToken cancellationToken)
+    {
+        var isUpdated = await _pollrepository.publishToggle(pollId, cancellationToken); 
 
+        if (isUpdated)
+            return Result.Success();
+        return Result.Failure(PollErrors.PollPublicationToggleFailed);
+    }
 
 }
 

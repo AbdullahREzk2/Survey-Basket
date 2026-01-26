@@ -15,4 +15,7 @@ public static class PollErrors
 
     public static Error PollDeletionFailed =
         new("Poll.DeletionFailed", "Failed to delete the poll.");
+
+    public static Error PollPublicationToggleFailed =
+                new("Poll.PublicationToggleFailed", "Failed to toggle the publication status of the poll.");
 }

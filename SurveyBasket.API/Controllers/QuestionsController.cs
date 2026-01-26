@@ -48,7 +48,7 @@ public class QuestionsController : ControllerBase
     #endregion
 
     #region Update Question
-    [HttpPut("{pollId}/questions/{questionId}")]
+    [HttpPut("UpdateQuestion/{pollId}/questions/{questionId}")]
     public async Task<IActionResult> UpdateQuestionAsync(int pollId,int questionId,[FromBody] QuestionRequestDTO question,CancellationToken cancellationToken)
     {
         var result = await _questionservice
@@ -60,5 +60,16 @@ public class QuestionsController : ControllerBase
     }
     #endregion
 
+    #region Activate Question
+    [HttpPut("activateQuestion /{pollId}/{questionId}")]
+    public async Task<IActionResult> activateQuestionAsync(int pollId,int questionId,CancellationToken cancellationToken)
+    {
+        var result = await _questionservice
+            .activeToggleQuestion(pollId, questionId, cancellationToken);
 
+        return result.IsSuccess
+            ? NoContent()
+            : result.ToProblem(StatusCodes.Status400BadRequest);
+    }
+    #endregion
 }

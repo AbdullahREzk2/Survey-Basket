@@ -6,4 +6,5 @@ public interface IQuestionRepository
     Task<Question?> AddQuestionAsync(Question question,CancellationToken cancellationToken);
     Task<bool> UpdateQuestionAsync(Question question, CancellationToken cancellationToken);
     Task<bool> searchQuestion(int pollId,string content,CancellationToken cancellationToken);
+    Task<bool> activeToggleQuestion(int pollId, int QuestionId, CancellationToken cancellationToken);
 }

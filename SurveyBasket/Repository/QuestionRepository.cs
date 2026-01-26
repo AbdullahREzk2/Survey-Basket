@@ -1,5 +1,4 @@
 ﻿namespace SurveyBasket.DAL.Repository;
-
 public class QuestionRepository : IQuestionRepository
 {
     private readonly ApplicationDBContext _context;
@@ -12,7 +11,7 @@ public class QuestionRepository : IQuestionRepository
     public async Task<IReadOnlyList<Question>> GetAllQuestionsForPollAsync(int pollId,CancellationToken cancellationToken)
     {
         return await _context.Questions
-            .Where(q => q.PollId == pollId)
+            .Where(q => q.PollId == pollId && q.isActive)
             .Include(q=>q.answers.Where(a=>a.isActive))
             .AsNoTracking()
             .ToListAsync(cancellationToken);
@@ -46,5 +45,20 @@ public class QuestionRepository : IQuestionRepository
         return await _context.Questions
             .AnyAsync(q => q.PollId == pollId && q.Content == content, cancellationToken);
     }
+    public async Task<bool> activeToggleQuestion(int pollId, int QuestionId, CancellationToken cancellationToken)
+    {
+        var question = await _context.Questions
+            .Where(q=> q.PollId == pollId && q.questionId == QuestionId)
+            .FirstOrDefaultAsync(cancellationToken);
+
+         if (question == null)
+            return false;
+
+        question.isActive = !question.isActive;
+
+        await _context.SaveChangesAsync(cancellationToken);
+        return true;
+    }
+
 
 }
