@@ -29,6 +29,7 @@ global using Microsoft.AspNetCore.Diagnostics;
 global using Microsoft.Extensions.Logging;
 global using SurveyBasket.BLL.Contracts.Questions;
 global using SurveyBasket.BLL.Contracts.Answers;
+global using SurveyBasket.BLL.Contracts.Votes;
 
 
 

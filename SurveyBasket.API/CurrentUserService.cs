@@ -9,9 +9,9 @@ public class CurrentUserService : ICurrentUserService
         _httpcontextaccessor = httpContextAccessor;
     }
 
-    public string? UserId=>
-         _httpcontextaccessor.HttpContext?.User
-            .FindFirstValue(ClaimTypes.NameIdentifier);
+    public string? UserId =>
+         _httpcontextaccessor.HttpContext?.User.GetUserId();
+            
     
 
 

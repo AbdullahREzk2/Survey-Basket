@@ -11,8 +11,16 @@ public class QuestionRepository : IQuestionRepository
     public async Task<IReadOnlyList<Question>> GetAllQuestionsForPollAsync(int pollId,CancellationToken cancellationToken)
     {
         return await _context.Questions
-            .Where(q => q.PollId == pollId && q.isActive)
+            .Where(q => q.PollId == pollId)
             .Include(q=>q.answers.Where(a=>a.isActive))
+            .AsNoTracking()
+            .ToListAsync(cancellationToken);
+    }
+    public async Task<IReadOnlyList<Question>> GetAvailbaleForPollAsync(int pollId, CancellationToken cancellationToken)
+    {
+        return await _context.Questions
+            .Where(q => q.PollId == pollId && q.isActive)
+            .Include(q => q.answers.Where(a => a.isActive))
             .AsNoTracking()
             .ToListAsync(cancellationToken);
     }

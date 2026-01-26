@@ -1,4 +1,4 @@
-﻿namespace SurveyBasket.BLL.Service;
+﻿  namespace SurveyBasket.BLL.Service;
 public class QuestionService : IQuestionService
 {
     private readonly IQuestionRepository _questionrepository;
@@ -41,7 +41,7 @@ public class QuestionService : IQuestionService
         if (isPollExist is null)
             return Result.Failure<IEnumerable<QuestionResponseDTO>>(PollErrors.PollNotFound);
 
-        var questions = await _questionrepository.GetAllQuestionsForPollAsync(pollId, cancellationToken);
+        var questions = await _questionrepository.GetAvailbaleForPollAsync(pollId, cancellationToken);
 
         var questionResponses = questions.Adapt<IEnumerable<QuestionResponseDTO>>();
 

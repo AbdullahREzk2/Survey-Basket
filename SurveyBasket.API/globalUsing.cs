@@ -29,4 +29,4 @@ global using SurveyBasket.Shared;
 global using SurveyBasket.BLL.Abstractions;
 global using SurveyBasket.BLL.Errors;
 global using SurveyBasket.BLL.Contracts.Questions;
-
+global using SurveyBasket.BLL.Contracts.Votes;

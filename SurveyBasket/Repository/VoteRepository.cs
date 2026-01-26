@@ -13,6 +13,14 @@ public class VoteRepository : IVoteRepository
         return await _context.Votes
             .AnyAsync(v => v.PollId == pollId && v.UserId == userId, cancellationToken);
     }
+    public async Task<bool> AddVoteAsync(Vote vote, CancellationToken cancellationToken)
+    {
+        await _context.Votes.AddAsync(vote, cancellationToken);
+        await _context.SaveChangesAsync(cancellationToken);
+        return true;
+
+    }
+
 
 
 }
