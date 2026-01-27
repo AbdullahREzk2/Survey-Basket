@@ -20,7 +20,7 @@ public class PollsController : ControllerBase
 
         return pollsResult.IsSuccess
             ? Ok(pollsResult.Value) 
-            : pollsResult.ToProblem(statuscode:StatusCodes.Status404NotFound);
+            : pollsResult.ToProblem();
     }
     #endregion
 
@@ -32,7 +32,7 @@ public class PollsController : ControllerBase
 
         return pollsResult.IsSuccess
             ? Ok(pollsResult.Value) 
-            : pollsResult.ToProblem(statuscode:StatusCodes.Status404NotFound);
+            : pollsResult.ToProblem();
     }
     #endregion
 
@@ -44,7 +44,7 @@ public class PollsController : ControllerBase
       
         return pollResult.IsSuccess 
             ? Ok(pollResult.Value) 
-            : pollResult.ToProblem(statuscode:StatusCodes.Status404NotFound);
+            : pollResult.ToProblem();
     }
     #endregion
 
@@ -56,7 +56,7 @@ public class PollsController : ControllerBase
 
         return createdPoll.IsSuccess 
             ? CreatedAtAction(nameof(GetPollById), new { pollId = createdPoll.Value.PollId }, createdPoll.Value)
-            : createdPoll.ToProblem(statuscode: StatusCodes.Status400BadRequest);
+            : createdPoll.ToProblem();
     }
     #endregion
 
@@ -68,7 +68,7 @@ public class PollsController : ControllerBase
             
         return updatedPoll.IsSuccess 
             ? Ok(updatedPoll.Value) 
-            : updatedPoll.ToProblem(statuscode:StatusCodes.Status404NotFound);
+            : updatedPoll.ToProblem();
     }
     #endregion
 
@@ -80,7 +80,7 @@ public class PollsController : ControllerBase
        
         return isDeleted.IsSuccess 
             ? NoContent() 
-            : isDeleted.ToProblem(statuscode:StatusCodes.Status404NotFound);
+            : isDeleted.ToProblem();
     }
     #endregion
 
@@ -92,7 +92,7 @@ public class PollsController : ControllerBase
        
         return publishedPoll.IsSuccess 
             ? Ok() 
-            : publishedPoll.ToProblem(statuscode:StatusCodes.Status404NotFound);
+            : publishedPoll.ToProblem();
     }
     #endregion
 

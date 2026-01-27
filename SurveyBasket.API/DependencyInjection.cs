@@ -33,6 +33,7 @@
             services.AddScoped<IPollRepository, PollRepository>();
             services.AddScoped<IQuestionRepository, QuestionRepository>();
             services.AddScoped<IVoteRepository, VoteRepository>();
+            services.AddScoped<IDashboardRepository, DashboardRepository>();
             #endregion
 
             // =========================
@@ -46,6 +47,7 @@
             services.AddScoped<ICurrentUserService, CurrentUserService>();
             services.AddScoped<IQuestionService, QuestionService>();
             services.AddScoped<IVoteService, VoteService>();
+            services.AddScoped<IDashboardService, DashboardService>();
             #endregion
 
             // =========================

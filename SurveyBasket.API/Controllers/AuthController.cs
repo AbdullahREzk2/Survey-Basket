@@ -17,9 +17,7 @@ public class AuthController : ControllerBase
     public async Task<IActionResult> Login([FromBody] loginRequestDTO request,CancellationToken cancellationToken)
     {
         var authResult = await _authservice.LoginAsync(request.Email, request.Password,cancellationToken);
-        return authResult.IsSuccess 
-            ? Ok(authResult.Value) 
-            : authResult.ToProblem(statuscode: StatusCodes.Status400BadRequest);
+        return authResult.IsSuccess ? Ok(authResult.Value) : authResult.ToProblem();
     }
     #endregion
 
@@ -31,7 +29,7 @@ public class AuthController : ControllerBase
 
         return result.IsSuccess
             ? Ok(result)
-            : result.ToProblem(statuscode:StatusCodes.Status401Unauthorized);
+            : result.ToProblem();
 
     }
     #endregion
@@ -44,7 +42,7 @@ public class AuthController : ControllerBase
 
         return isRevoked.IsSuccess
             ? Ok()
-            :isRevoked.ToProblem(statuscode:StatusCodes.Status400BadRequest);
+            :isRevoked.ToProblem();
     }
     #endregion
 

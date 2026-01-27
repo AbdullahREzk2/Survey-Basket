@@ -21,12 +21,8 @@ public class VotesController : ControllerBase
 
        var result = await _questionservice.GetAvailableQuestionsAsync(pollId, userId, cancellationToken);
 
-        if (result.IsSuccess)
-            return Ok(result.Value);
+         return result.IsSuccess?Ok(result.Value): result.ToProblem();
 
-        return result.Error.Equals(VoteErrors.UserAlreadyVoted)
-            ? result.ToProblem(StatusCodes.Status409Conflict)
-            : result.ToProblem(StatusCodes.Status404NotFound);
     }
     #endregion
 
@@ -36,20 +32,10 @@ public class VotesController : ControllerBase
     {
         var result = await _voteservice.AddVoteAsync(pollId,User.GetUserId()!,request,cancellationToken);
 
-        if (result.IsSuccess)
-            return NoContent();
+        return result.IsSuccess
+            ? NoContent()
+            : result.ToProblem();
 
-        return result.Error switch
-        {
-            var e when e == VoteErrors.UserAlreadyVoted =>
-                result.ToProblem(StatusCodes.Status409Conflict),
-
-            var e when e == PollErrors.PollNotFound =>
-                result.ToProblem(StatusCodes.Status404NotFound),
-
-            _ =>
-                result.ToProblem(StatusCodes.Status400BadRequest)
-        };
     }
     #endregion
 

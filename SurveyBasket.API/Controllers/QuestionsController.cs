@@ -11,7 +11,7 @@ public class QuestionsController : ControllerBase
         _questionservice = questionService;
     }
 
-    #region getAllQuestionsForPoll
+   #region getAllQuestionsForPoll
     [HttpGet("getAllQuestions / {pollId}")]
     public async Task<IActionResult> getAllQuestionsForPollAsync(int pollId,CancellationToken cancellationToken)
     {
@@ -19,7 +19,7 @@ public class QuestionsController : ControllerBase
 
         return questionsResult.IsSuccess
             ? Ok(questionsResult.Value)
-            : questionsResult.ToProblem(statuscode: StatusCodes.Status404NotFound);
+            : questionsResult.ToProblem();
     }
     #endregion
 
@@ -31,7 +31,7 @@ public class QuestionsController : ControllerBase
 
         return question.IsSuccess
             ? Ok(question.Value)
-            : question.ToProblem(statuscode: StatusCodes.Status404NotFound);
+            : question.ToProblem();
     }
     #endregion
 
@@ -43,7 +43,7 @@ public class QuestionsController : ControllerBase
 
         return addResponse.IsSuccess
             ? Ok(addResponse.Value)
-            : addResponse.ToProblem(statuscode: StatusCodes.Status400BadRequest);
+            : addResponse.ToProblem();
     }
     #endregion
 
@@ -56,7 +56,7 @@ public class QuestionsController : ControllerBase
 
         return result.IsSuccess
             ? NoContent()
-            : result.ToProblem(StatusCodes.Status400BadRequest);
+            : result.ToProblem();
     }
     #endregion
 
@@ -69,7 +69,9 @@ public class QuestionsController : ControllerBase
 
         return result.IsSuccess
             ? NoContent()
-            : result.ToProblem(StatusCodes.Status400BadRequest);
+            : result.ToProblem();
     }
     #endregion
+
+
 }
