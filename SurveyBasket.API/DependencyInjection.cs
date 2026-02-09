@@ -24,6 +24,13 @@
             services.AddIdentity<ApplicationUser,IdentityRole>()
                 .AddEntityFrameworkStores<ApplicationDBContext>()
                 .AddDefaultTokenProviders();
+
+            services.Configure<IdentityOptions>(options =>
+            {
+                options.Password.RequiredLength = 8;
+                //options.SignIn.RequireConfirmedEmail = true;
+                options.User.RequireUniqueEmail = true;
+            });
             #endregion
 
             // =========================
@@ -65,7 +72,7 @@
             #region
             services.AddValidatorsFromAssembly(typeof(PollRequestValidation).Assembly);
             #endregion
-
+           
 
             // =========================
             // Authentication
