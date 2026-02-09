@@ -1,15 +1,16 @@
 # SurveyBasket API
 
-**SurveyBasket** is a personal learning backend project built with **ASP.NET Core Web API**. The project focuses on designing a **clean, scalable backend** for managing polls, questions, and answers using a **3-Layer Architecture** and real-world backend practices.
+**SurveyBasket** is a backend-focused personal learning project built with **ASP.NET Core Web API**. The project is designed to simulate a **real-world polling system**, with a strong emphasis on **clean architecture**, **business rules**, and **analytics-ready data** rather than simple CRUD operations.
 
 ---
 
 ## Project Goals
 
-* Practice real backend architecture (beyond tutorial-style CRUD)
+* Practice real backend architecture beyond tutorial-level CRUD
 * Apply clean separation of concerns (API / BLL / DAL)
 * Implement secure authentication using JWT and refresh tokens
-* Design flexible poll and question logic with soft deletion
+* Design flexible poll, question, and voting logic with clear business rules
+* Build dashboard-ready statistics and analytics endpoints
 * Work with PostgreSQL in a production-like environment
 
 ---
@@ -19,9 +20,11 @@
 ### Authentication
 
 * User login
+* JWT-based authentication
 * Refresh token flow
 * Revoke refresh token
-* JWT-based authentication
+
+---
 
 ### Polls
 
@@ -29,9 +32,11 @@
 * Retrieve a poll by ID
 * Create a poll
 * Update a poll
-* Delete a poll
+* Soft delete a poll
 
-### Questions
+---
+
+### Questions & Answers
 
 * Retrieve all questions for a poll
 * Retrieve a specific question for a poll
@@ -45,6 +50,29 @@
 * Existing answers → reactivated
 * New answers → created
 * Only **active answers** are returned in read operations
+
+---
+
+### Voting System
+
+* Authenticated users can vote on polls
+* Each user can select **only one answer per question**
+* Voting is tied to the authenticated user (not anonymous)
+* Votes are stored in a normalized structure (`Vote` / `VoteAnswer`)
+
+---
+
+### Dashboard & Statistics (Admin)
+
+The project includes **analytics-ready endpoints** intended for an **admin dashboard** (admin authorization will be enforced later).
+
+#### Supported Statistics
+
+* **Poll statistics** (per poll)
+* **Votes per day** for a poll
+* **Votes per question** for a poll
+
+These statistics are designed to support charts and dashboards on the frontend.
 
 ---
 
@@ -64,7 +92,8 @@ SurveyBasket
 │   ├── Services
 │   ├── DTOs (Contracts)
 │   ├── Business Rules
-│   └── Validation & Result Pattern
+│   ├── Validation
+│   └── Result Pattern
 │
 ├── DAL (Data Access Layer)
 │   ├── Entities
@@ -72,7 +101,7 @@ SurveyBasket
 │   └── DbContext (EF Core)
 ```
 
-Each layer is isolated and communicates only through defined contracts.
+Each layer communicates only through well-defined contracts, ensuring maintainability and testability.
 
 ---
 
@@ -86,11 +115,12 @@ Each layer is isolated and communicates only through defined contracts.
 * **Mapping:** Mapster
 * **Authentication:** JWT + Refresh Tokens
 * **API Documentation:** Scalar
-* **Design Patterns:**
 
-  * Repository Pattern
-  * Result Pattern
-  * DTO Pattern
+### Design Patterns
+
+* Repository Pattern
+* Result Pattern
+* DTO Pattern
 
 ---
 
@@ -99,9 +129,11 @@ Each layer is isolated and communicates only through defined contracts.
 * Polls contain multiple questions
 * Questions contain multiple answers
 * Answers use **soft deletion** via `IsActive`
+* Each user can vote **once per question**
+* Votes are linked to users
 * Update logic safely synchronizes answers
-* Read APIs expose only active answers
-* Business rules are enforced in the BLL layer
+* Read operations return only active answers
+* All business rules are enforced in the BLL layer
 
 ---
 
@@ -115,6 +147,8 @@ POST   /api/auth/refresh-token
 POST   /api/auth/revoke-refresh-token
 ```
 
+---
+
 ### Polls
 
 ```
@@ -124,6 +158,8 @@ POST   /api/polls
 PUT    /api/polls/{pollId}
 DELETE /api/polls/{pollId}
 ```
+
+---
 
 ### Questions
 
@@ -136,9 +172,33 @@ PUT    /api/polls/{pollId}/questions/{questionId}
 
 ---
 
+### Voting
+
+```
+GET    /api/polls/{pollId}/available-questions
+POST   /api/polls/{pollId}/vote
+```
+
+* `available-questions` returns questions and **active answers** ready for voting
+* `vote` allows an authenticated user to submit their answers
+
+---
+
+### Dashboard & Statistics (Admin)
+
+```
+GET /api/dashboard/polls/{pollId}/statistics
+GET /api/dashboard/polls/{pollId}/votes-per-day
+GET /api/dashboard/polls/{pollId}/votes-per-question
+```
+
+> These endpoints are intended for **admin dashboard usage** and will be protected by role-based authorization in future iterations.
+
+---
+
 ## Error Handling
 
-* Centralized **Result Pattern** for consistent responses
+* Centralized **Result Pattern** for consistent API responses
 * Business errors mapped to `ProblemDetails`
 * Clear handling for:
 
@@ -148,7 +208,17 @@ PUT    /api/polls/{pollId}/questions/{questionId}
 
 ---
 
+## Future Improvements
+
+* Admin role & authorization policies
+* Dashboard UI with charts
+* Vote percentages per question
+* Prevent duplicate voting at the database level
+* Caching frequently accessed statistics
+
+---
+
 ## Author
 
 **Abdullah Rezk**
-,,Backend-focused personal learning project using ASP.NET Core
+Backend-focused personal learning project using **ASP.NET Core Web API**
