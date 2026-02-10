@@ -31,3 +31,6 @@ global using SurveyBasket.BLL.Errors;
 global using SurveyBasket.BLL.Contracts.Questions;
 global using SurveyBasket.BLL.Contracts.Votes;
 global using Serilog;
+global using SurveyBasket.API.Settings;
+global using SurveyBasket.BLL.Mapping;
+global using Microsoft.AspNetCore.Identity.UI.Services;

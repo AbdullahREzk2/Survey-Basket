@@ -1,6 +1,4 @@
-﻿using SurveyBasket.BLL.Abstractions.Consts;
-
-namespace SurveyBasket.BLL.Contracts.Authantication;
+﻿namespace SurveyBasket.BLL.Contracts.Authantication;
 public class RegisterRequestValidation:AbstractValidator<RegisterRequestDTO>
 {
     public RegisterRequestValidation()
@@ -14,11 +12,11 @@ public class RegisterRequestValidation:AbstractValidator<RegisterRequestDTO>
             .Matches(RegexPatterns.Password)
             .WithMessage("Password should at least 8 digits , contains at Least ( 1 LowerLetter,1 UpperLetter ,1 digit,1 special character )");
 
-        RuleFor(x => x.FirstName)
+        RuleFor(x => x.firstName)
             .NotEmpty().WithMessage("FirstName Cannot be empty !")
             .MaximumLength(100).WithMessage("FirstName Should be Less than 100 !");
 
-        RuleFor(x=>x.LastName)
+        RuleFor(x=>x.lastName)
             .NotEmpty().WithMessage("LastName Cannot be Empty !")
             .MaximumLength(100).WithMessage("LastName Should be less than 100 !");
 

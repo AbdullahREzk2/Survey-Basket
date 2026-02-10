@@ -1,4 +1,4 @@
-﻿namespace SurveyBasket.API;
+﻿namespace SurveyBasket.API.Infrastructure;
 
 public class CurrentUserService : ICurrentUserService
 {

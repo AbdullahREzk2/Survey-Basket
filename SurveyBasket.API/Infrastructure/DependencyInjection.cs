@@ -1,4 +1,4 @@
-﻿namespace SurveyBasket.API.Extensions
+﻿namespace SurveyBasket.API.Infrastructure
 {
     public static class DependencyInjection
     {
@@ -28,7 +28,7 @@
             services.Configure<IdentityOptions>(options =>
             {
                 options.Password.RequiredLength = 8;
-                //options.SignIn.RequireConfirmedEmail = true;
+                options.SignIn.RequireConfirmedEmail = true;
                 options.User.RequireUniqueEmail = true;
             });
             #endregion
@@ -62,8 +62,9 @@
             // =========================
             #region
             var MappingConfig = TypeAdapterConfig.GlobalSettings;
-            MappingConfig.Scan(Assembly.GetExecutingAssembly());
+            MappingConfig.Scan(typeof(MappingConfigurations).Assembly);
             services.AddSingleton<IMapper>(new Mapper(MappingConfig));
+
             #endregion
 
             // =========================
@@ -72,7 +73,6 @@
             #region
             services.AddValidatorsFromAssembly(typeof(PollRequestValidation).Assembly);
             #endregion
-           
 
             // =========================
             // Authentication
@@ -116,7 +116,14 @@
             services.AddProblemDetails();
             #endregion
 
-            
+            // =========================
+            // Mail Settings
+            // =========================
+            #region
+            services.Configure<MailSettings>(configuration.GetSection(nameof(MailSettings)));
+            services.AddScoped<IEmailSender, EmailService>();
+            #endregion
+
 
             return services;
         

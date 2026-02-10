@@ -31,6 +31,11 @@ global using SurveyBasket.BLL.Contracts.Questions;
 global using SurveyBasket.BLL.Contracts.Answers;
 global using SurveyBasket.BLL.Contracts.Votes;
 global using SurveyBasket.BLL.Contracts.Dashboard;
+global using SurveyBasket.BLL.Abstractions.Consts;
+global using Microsoft.EntityFrameworkCore;
+global using Microsoft.AspNetCore.WebUtilities;
+global using Microsoft.AspNetCore.Identity.UI.Services;
+global using SurveyBasket.BLL.Helpers;
 
 
 

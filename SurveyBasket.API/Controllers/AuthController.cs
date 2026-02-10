@@ -36,7 +36,7 @@ public class AuthController : ControllerBase
 
     #region revoke-refresh-Token
     [HttpPost("revoke-refresh-token")]
-    public async Task<IActionResult> revokeRefreshTokenAsync([FromBody] refreshTokenRequest request, CancellationToken cancellationToken)
+    public async Task<IActionResult> revokeRefreshToken([FromBody] refreshTokenRequest request, CancellationToken cancellationToken)
     {
         var isRevoked = await _authservice.RevokeRefreshTokenAsync(request.Token, request.RefreshToken, cancellationToken);
 
@@ -46,6 +46,43 @@ public class AuthController : ControllerBase
     }
     #endregion
 
+
+    #region Register
+    [HttpPost("Register")]
+    public async Task<IActionResult> Register([FromBody] RegisterRequestDTO request, CancellationToken cancellationToken)
+    {
+        var result = await _authservice.RegisterAsync(request, cancellationToken);
+
+        return result.IsSuccess
+            ? Ok()
+            : result.ToProblem();
+    }
+    #endregion
+
+
+    #region Confirm-Email
+    [HttpPost("Confirm-Email")]
+    public async Task<IActionResult> ConfirmEmail([FromBody] ConfirmEmailRequestDTO request)
+    {
+        var result = await _authservice.ConfirmEmailAsync(request);
+
+        return result.IsSuccess
+            ? Ok()
+            : result.ToProblem();
+    }
+    #endregion
+
+    #region Resend-Confirm-Email
+    [HttpPost("Resend-Confirm-Email")]
+    public async Task<IActionResult> ResendConfirmEmail([FromBody] ResendConfirmationEmailRequest request)
+    {
+        var result = await _authservice.ResendConfirmationEmailAsync(request);
+
+        return result.IsSuccess
+            ? Ok()
+            : result.ToProblem();
+    }
+    #endregion
 
 
 }
