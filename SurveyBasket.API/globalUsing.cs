@@ -34,3 +34,5 @@ global using Serilog;
 global using SurveyBasket.API.Settings;
 global using SurveyBasket.BLL.Mapping;
 global using Microsoft.AspNetCore.Identity.UI.Services;
+global using Hangfire;
+global using Hangfire.PostgreSql;

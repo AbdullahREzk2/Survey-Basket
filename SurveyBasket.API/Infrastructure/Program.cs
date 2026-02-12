@@ -32,6 +32,7 @@ namespace SurveyBasket.API.Infrastructure
             }
             app.UseSerilogRequestLogging();
             app.UseHttpsRedirection();
+            app.UseHangfireDashboard("/jobs");
             app.UseAuthentication();
             app.UseAuthorization();
             app.MapControllers();
