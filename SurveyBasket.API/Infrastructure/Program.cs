@@ -1,3 +1,5 @@
+using HangfireBasicAuthenticationFilter;
+
 namespace SurveyBasket.API.Infrastructure
 {
     public class Program
@@ -31,12 +33,31 @@ namespace SurveyBasket.API.Infrastructure
                 app.MapScalarApiReference();
             }
             app.UseSerilogRequestLogging();
+
             app.UseHttpsRedirection();
-            app.UseHangfireDashboard("/jobs");
+
+            app.UseHangfireDashboard("/jobs",new DashboardOptions
+            {
+                Authorization =
+                [
+                    new HangfireCustomBasicAuthenticationFilter
+                    {
+                        User = app.Configuration.GetValue<string>("HangfireSettings:UserName"),
+                        Pass = app.Configuration.GetValue<string>("HangfireSettings:Password")
+                    }
+                ],
+                DashboardTitle= "Survey Basket Jobs Dashboard"
+
+            });
+
             app.UseAuthentication();
+
             app.UseAuthorization();
+
             app.MapControllers();
+
             app.UseExceptionHandler();
+
             app.Run();
 
 
