@@ -36,6 +36,7 @@ global using Microsoft.EntityFrameworkCore;
 global using Microsoft.AspNetCore.WebUtilities;
 global using Microsoft.AspNetCore.Identity.UI.Services;
 global using SurveyBasket.BLL.Helpers;
+global using Hangfire;
 
 
 

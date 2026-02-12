@@ -6,6 +6,7 @@ public class AuthService : IAuthService
     private readonly IJwtProvider _jwtprovider;
     private readonly ILogger<AuthService> _logger;
     private readonly IEmailSender _emailsender;
+    private readonly IBackgroundJobClient _backgroundjob;
     private readonly int _refreshTokenValidityInDays = 14;
 
     public AuthService
@@ -14,7 +15,8 @@ public class AuthService : IAuthService
         SignInManager<ApplicationUser> signInManager ,
         IJwtProvider jwtProvider,
         ILogger<AuthService> logger,
-        IEmailSender emailSender
+        IEmailSender emailSender,
+        IBackgroundJobClient backgroundJob
         )
     {
         _usermanager = userManager;
@@ -22,6 +24,7 @@ public class AuthService : IAuthService
         _jwtprovider = jwtProvider;
         _logger = logger;
         _emailsender = emailSender;
+        _backgroundjob = backgroundJob;
     }
 
     public async Task<Result<loginResponseDTO>> LoginAsync(string Email, string Password, CancellationToken cancellationToken)
@@ -207,7 +210,12 @@ public class AuthService : IAuthService
                     {"{name}",user.firstName }
              }
             );
-        await _emailsender.SendEmailAsync(user.Email!, " ✅ Survey Basket : Email Confirmation", emailBody);
+
+        _backgroundjob.Enqueue<IEmailSender>(x =>
+            x.SendEmailAsync(user.Email!, "✅ Survey Basket : Email Confirmation", emailBody)
+        );
+
+        await Task.CompletedTask;
     }
 
 }
