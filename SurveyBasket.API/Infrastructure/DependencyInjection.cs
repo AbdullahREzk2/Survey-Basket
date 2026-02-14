@@ -1,6 +1,4 @@
-﻿using SurveyBasket.BLL.Settings;
-
-namespace SurveyBasket.API.Infrastructure
+﻿namespace SurveyBasket.API.Infrastructure
 {
     public static class DependencyInjection
     {
@@ -83,7 +81,7 @@ namespace SurveyBasket.API.Infrastructure
             services.AddScoped<IVoteService, VoteService>();
             services.AddScoped<IDashboardService, DashboardService>();
             services.AddScoped<INotificationService, NotificationService>();
-
+            services.AddScoped<IUserService, UserService>();
             return services;
         }
 

@@ -1,3 +1,4 @@
+using Hangfire.Dashboard;
 using HangfireBasicAuthenticationFilter;
 
 namespace SurveyBasket.API.Infrastructure
@@ -46,7 +47,8 @@ namespace SurveyBasket.API.Infrastructure
                         Pass = app.Configuration.GetValue<string>("HangfireSettings:Password")
                     }
                 ],
-                DashboardTitle= "Survey Basket Jobs Dashboard"
+                DashboardTitle= "Survey Basket Jobs Dashboard",
+                //IsReadOnlyFunc = (DashboardContext context) => true
 
             });
 

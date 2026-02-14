@@ -1,12 +1,11 @@
-﻿using SurveyBasket.BLL.Settings;
-
-namespace SurveyBasket.BLL.Service;
+﻿namespace SurveyBasket.BLL.Service;
 public class NotificationService(
     IPollRepository pollRepository,
     UserManager<ApplicationUser> userManager,
     IEmailSender emailSender,
     IOptions<AppURLSetting> appUrlSettings
-    ) : INotificationService
+    )
+    : INotificationService
 {
     private readonly IPollRepository _pollrepository = pollRepository;
     private readonly UserManager<ApplicationUser> _usermanager = userManager;
@@ -20,7 +19,7 @@ public class NotificationService(
         if (pollId.HasValue)
         {
             var pollModel = await _pollrepository.getTodayPoll(pollId, cancellationToken);
-            pollsItem = pollModel.Adapt<IEnumerable<PollResponseDTO>>();
+            pollsItem = new List<PollResponseDTO> { pollModel.Adapt<PollResponseDTO>() };
         }
         else
         {

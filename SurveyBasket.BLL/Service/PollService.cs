@@ -2,11 +2,13 @@
 public class PollService : IPollService
 {
     private readonly IPollRepository _pollrepository;
+    private readonly INotificationService _notificationservice;
     private readonly IMapper _mapper;
 
-    public PollService(IPollRepository pollRepository,IMapper mapper)
+    public PollService(IPollRepository pollRepository,INotificationService notificationService,IMapper mapper)
     {
         _pollrepository = pollRepository;
+        _notificationservice = notificationService;
         _mapper = mapper;
     }
 
@@ -83,11 +85,20 @@ public class PollService : IPollService
     }
     public async Task<Result> publishToggle(int pollId, CancellationToken cancellationToken)
     {
-        var isUpdated = await _pollrepository.publishToggle(pollId, cancellationToken); 
+        var isUpdated = await _pollrepository.publishToggle(pollId, cancellationToken);
 
-        if (isUpdated)
-            return Result.Success();
-        return Result.Failure(PollErrors.PollPublicationToggleFailed);
+        if (!isUpdated)
+            return Result.Failure(PollErrors.PollPublicationToggleFailed);
+
+        var poll = await _pollrepository.getPollByIdAsync(pollId, cancellationToken);
+
+        if (poll.isPublished && poll.startDate == DateOnly.FromDateTime(DateTime.UtcNow))
+        {
+            BackgroundJob.Enqueue<INotificationService>(
+                service => service.sendNewNotificationPollAsync(pollId, CancellationToken.None));
+        }
+
+        return Result.Success();
     }
 
 }
