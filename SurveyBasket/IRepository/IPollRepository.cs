@@ -10,5 +10,6 @@ public interface IPollRepository
     Task<bool> DeletePollAsync(int pollId,CancellationToken cancellationToken);
     Task<bool> SearchPollByTitleAsync(string title,CancellationToken cancellationToken);
     Task<bool> publishToggle(int pollId,CancellationToken cancellationToken);
-
+    Task<IEnumerable<Poll>> getTodayPolls(CancellationToken cancellationToken);
+    Task<Poll> getTodayPoll(int? PollId,CancellationToken cancellationToken); 
 }

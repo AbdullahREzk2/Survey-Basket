@@ -100,5 +100,21 @@ public class PollRepository : IPollRepository
         return true;
 
     }
+    public async Task<IEnumerable<Poll>> getTodayPolls(CancellationToken cancellationToken)
+    {
+        var polls = await _dbcontext.Polls
+            .Where(x=>x.isPublished && x.startDate == DateOnly.FromDateTime(DateTime.UtcNow))
+            .AsNoTracking()
+            .ToListAsync(cancellationToken);
+
+        return polls;
+    }
+    public async Task<Poll> getTodayPoll(int? PollId, CancellationToken cancellationToken)
+    {
+        var poll = await _dbcontext.Polls
+            .SingleOrDefaultAsync(x => x.PollId == PollId && x.isPublished);
+        return poll!;
+    }
+
 
 }

@@ -1,4 +1,6 @@
-﻿namespace SurveyBasket.API.Infrastructure
+﻿using SurveyBasket.BLL.Settings;
+
+namespace SurveyBasket.API.Infrastructure
 {
     public static class DependencyInjection
     {
@@ -80,6 +82,7 @@
             services.AddScoped<IQuestionService, QuestionService>();
             services.AddScoped<IVoteService, VoteService>();
             services.AddScoped<IDashboardService, DashboardService>();
+            services.AddScoped<INotificationService, NotificationService>();
 
             return services;
         }
@@ -189,6 +192,17 @@
             );
 
             services.AddHangfireServer();
+
+            return services;
+        }
+
+        // =========================
+        // APPURL settings
+        // =========================
+        private static IServiceCollection AddURLServices(this IServiceCollection services, IConfiguration configuration)
+        {
+            services.Configure<AppURLSetting>(
+                configuration.GetSection("AppURL"));
 
             return services;
         }

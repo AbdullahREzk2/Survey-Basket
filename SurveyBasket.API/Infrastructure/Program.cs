@@ -50,6 +50,11 @@ namespace SurveyBasket.API.Infrastructure
 
             });
 
+            var scopeFactory = app.Services.GetRequiredService<IServiceScopeFactory>();
+            using var scope = scopeFactory.CreateScope();
+            var notificationService = scope.ServiceProvider.GetRequiredService<INotificationService>();
+            RecurringJob.AddOrUpdate("sendNewNotificationPollAsync", () => notificationService.sendNewNotificationPollAsync(null,CancellationToken.None), Cron.Daily);
+
             app.UseAuthentication();
 
             app.UseAuthorization();
