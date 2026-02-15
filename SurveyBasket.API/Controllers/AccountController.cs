@@ -16,5 +16,24 @@ public class AccountController(IUserService userService) : ControllerBase
     }
     #endregion
 
+    #region Update user info
+    [HttpPut("update-User-Info")]
+    public async Task<IActionResult> UpdateUserInfo([FromBody] UpdateProfileRequest request)
+    {
+        await _userservice.UpdateUserProfileAsync(User.GetUserId()!, request);
+
+        return NoContent();
+    }
+    #endregion
+
+    #region chnage User Password
+    [HttpPut("change-password")]
+    public async Task<IActionResult> ChangePassword([FromBody] ChangePasswordRequest request)
+    {
+        var result = await _userservice.ChangePasswordAsync(User.GetUserId()!, request);
+        return result.IsSuccess? NoContent(): result.ToProblem();
+    }
+    #endregion
+
 
 }

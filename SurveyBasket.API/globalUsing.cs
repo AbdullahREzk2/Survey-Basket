@@ -37,3 +37,4 @@ global using Microsoft.AspNetCore.Identity.UI.Services;
 global using Hangfire;
 global using Hangfire.PostgreSql;
 global using SurveyBasket.BLL.Settings;
+global using SurveyBasket.BLL.Contracts.Users;
