@@ -85,4 +85,27 @@ public class AuthController : ControllerBase
     #endregion
 
 
+    #region Forget-Password
+    [HttpPost("forget-Password")]
+    public async Task<IActionResult> forgetPassword([FromBody] ForgetPasswordRequest request)
+    {
+        var result = await _authservice.SendResetPasswordAsync(request);
+
+        return result.IsSuccess
+            ? Ok()
+            : result.ToProblem();
+    }
+    #endregion
+
+    #region Reset-Password
+    [HttpPost("Reset-Password")]
+    public async Task<IActionResult> ResetPassword([FromBody] ResetPasswordRequest request)
+    {
+        var result = await _authservice.ResetPasswordAsync(request);
+        return result.IsSuccess
+            ? Ok()
+            : result.ToProblem();
+    }
+    #endregion
+
 }

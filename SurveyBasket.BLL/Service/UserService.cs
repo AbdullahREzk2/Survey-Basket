@@ -16,12 +16,18 @@ public class UserService(UserManager<ApplicationUser> userManager) : IUserServic
 
     public async Task<Result> UpdateUserProfileAsync(string userId, UpdateProfileRequest request)
     {
-        var user = await _usermanager.FindByIdAsync(userId);
+        //var user = await _usermanager.FindByIdAsync(userId);
 
-        user = request.Adapt(user);
+        //user = request.Adapt(user);
 
-        await _usermanager.UpdateAsync(user!);
+        //await _usermanager.UpdateAsync(user!);
 
+        await _usermanager.Users
+            .Where(x => x.Id == userId)
+            .ExecuteUpdateAsync(x => x
+                .SetProperty(p => p.firstName, request.firstName)
+                .SetProperty(p => p.lastName, request.lastName)
+            );
         return Result.Success();
     }
     public async Task<Result> ChangePasswordAsync(string userId, ChangePasswordRequest request)
@@ -36,6 +42,8 @@ public class UserService(UserManager<ApplicationUser> userManager) : IUserServic
         var error = result.Errors.First();
         return Result.Failure(new Error(error.Code, error.Description,StatusCodes.Status400BadRequest));
     }
+
+    
 
 
 }
