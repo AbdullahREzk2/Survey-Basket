@@ -174,7 +174,10 @@ public class AuthService : IAuthService
         var result = await _usermanager.ConfirmEmailAsync(user, code);
 
         if (result.Succeeded)
+        {
+            await sendWelcomeEmail(user);
             return Result.Success();
+        }
 
         var error = result.Errors.First();
 
@@ -279,10 +282,22 @@ public class AuthService : IAuthService
 
         await Task.CompletedTask;
     }
+    private async Task sendWelcomeEmail(ApplicationUser user)
+    {
+        var emailBody = EmailBodyBuilder.GenerateEmailBody("Welcome",
+            new Dictionary<string, string>
+             {
+                    {"{{UserName}}",user.firstName },
+             }
+            );
+        _backgroundjob.Enqueue<IEmailSender>(x =>
+            x.SendEmailAsync(user.Email!, "👋 Survey Basket : Welcome Email ", emailBody)
+        );
+        await Task.CompletedTask;
 
+    }
 
-
-}
+    }
 
 
 
