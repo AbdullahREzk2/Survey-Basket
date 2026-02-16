@@ -62,6 +62,7 @@
             services.AddScoped<IQuestionRepository, QuestionRepository>();
             services.AddScoped<IVoteRepository, VoteRepository>();
             services.AddScoped<IDashboardRepository, DashboardRepository>();
+            services.AddScoped<IUserRepository, UserRepository>();
 
             return services;
         }
@@ -204,6 +205,8 @@
 
             return services;
         }
+
+
 
     }
 }

@@ -8,6 +8,7 @@ public class AuthService : IAuthService
     private readonly IEmailSender _emailsender;
     private readonly IBackgroundJobClient _backgroundjob;
     private readonly IHttpContextAccessor _httpcontextaccessor;
+    private readonly IUserRepository _userrepository;
     private readonly int _refreshTokenValidityInDays = 14;
 
     public AuthService
@@ -18,7 +19,8 @@ public class AuthService : IAuthService
         ILogger<AuthService> logger,
         IEmailSender emailSender,
         IBackgroundJobClient backgroundJob,
-        IHttpContextAccessor httpContextAccessor
+        IHttpContextAccessor httpContextAccessor,
+        IUserRepository userRepository
         )
     {
         _usermanager = userManager;
@@ -28,6 +30,7 @@ public class AuthService : IAuthService
         _emailsender = emailSender;
         _backgroundjob = backgroundJob;
         _httpcontextaccessor = httpContextAccessor;
+        _userrepository = userRepository;
     }
 
     public async Task<Result<loginResponseDTO>> LoginAsync(string Email, string Password, CancellationToken cancellationToken)
@@ -41,8 +44,11 @@ public class AuthService : IAuthService
 
         if(result.Succeeded)
         {
+            var userRoles = await _usermanager.GetRolesAsync(user);
+            var userPermissions = await _userrepository.GetUserPermissions(userRoles,cancellationToken);
+
             // generate token
-            var (token, expireIn) = _jwtprovider.GenerateToken(user);
+            var (token, expireIn) = _jwtprovider.GenerateToken(user,userRoles,userPermissions);
 
             // generate refresh token
             var refreshToken = GenerateRefreshToken();
@@ -64,7 +70,6 @@ public class AuthService : IAuthService
         return Result.Failure<loginResponseDTO>(result.IsNotAllowed ? UserErrors.EmailNotConfirmed : UserErrors.InvalidCredentials);
         
     }
-
     public async Task<Result<loginResponseDTO>> GetRefreshTokenAsync(string token, string refreshToken, CancellationToken cancellationToken)
     {
         // get the User Id from the token
@@ -84,8 +89,13 @@ public class AuthService : IAuthService
 
         // revoke the old refresh token
         userRefreshToken.RevokedOn = DateTime.UtcNow;
+
+        var userRoles = await _usermanager.GetRolesAsync(user);
+        var userPermissions = await _userrepository.GetUserPermissions(userRoles, cancellationToken);
+
         // generate new jwt token & refresh token
-        var (newToken, expireIn) = _jwtprovider.GenerateToken(user);
+        var (newToken, expireIn) = _jwtprovider.GenerateToken(user,userRoles,userPermissions);
+
         var newRefreshToken = GenerateRefreshToken();
         var refreshTokenExpiration = DateTime.UtcNow.AddDays(_refreshTokenValidityInDays);
 
@@ -176,6 +186,7 @@ public class AuthService : IAuthService
         if (result.Succeeded)
         {
             await sendWelcomeEmail(user);
+            await _usermanager.AddToRoleAsync(user, defaultRoles.Member);
             return Result.Success();
         }
 

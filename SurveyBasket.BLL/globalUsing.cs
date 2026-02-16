@@ -39,6 +39,8 @@ global using SurveyBasket.BLL.Helpers;
 global using Hangfire;
 global using SurveyBasket.BLL.Settings;
 global using SurveyBasket.BLL.Contracts.Users;
+global using SurveyBasket.DAL.seedData;
+global using System.Text.Json;
 
 
 

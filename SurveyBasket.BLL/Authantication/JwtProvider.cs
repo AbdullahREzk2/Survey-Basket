@@ -1,4 +1,4 @@
-﻿ namespace SurveyBasket.BLL.CurrentUserService;
+﻿namespace SurveyBasket.BLL.CurrentUserService;
 public class JwtProvider : IJwtProvider
 {
     private readonly JwtOptions _options;
@@ -7,7 +7,7 @@ public class JwtProvider : IJwtProvider
     {
         _options = options.Value;
     }
-    public (string token, int expireIn) GenerateToken(ApplicationUser user)
+    public (string token, int expireIn) GenerateToken(ApplicationUser user,IEnumerable<string> roles, IEnumerable<string> permissions)
     {
         Claim[] claims = [
             new(JwtRegisteredClaimNames.Sub, user.Id),
@@ -15,6 +15,8 @@ public class JwtProvider : IJwtProvider
             new(JwtRegisteredClaimNames.GivenName,user.firstName!),
             new(JwtRegisteredClaimNames.FamilyName,user.lastName!),
             new(JwtRegisteredClaimNames.Jti,Guid.NewGuid().ToString()),
+            new(nameof(roles),JsonSerializer.Serialize(roles),JsonClaimValueTypes.JsonArray),
+            new(nameof(permissions),JsonSerializer.Serialize(permissions),JsonClaimValueTypes.JsonArray)
             ];
 
         var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_options.key));
