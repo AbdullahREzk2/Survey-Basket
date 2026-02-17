@@ -1,7 +1,6 @@
 ﻿namespace SurveyBasket.API.Controllers;
 [Route("api/[controller]")]
 [ApiController]
-[Authorize]
 public class QuestionsController : ControllerBase
 {
     private readonly IQuestionService _questionservice;
@@ -13,6 +12,7 @@ public class QuestionsController : ControllerBase
 
    #region getAllQuestionsForPoll
     [HttpGet("getAllQuestions / {pollId}")]
+    [HasPermission(Permissions.GetQuestions)]
     public async Task<IActionResult> getAllQuestionsForPollAsync(int pollId,CancellationToken cancellationToken)
     {
         var questionsResult = await _questionservice.GetAllQuestionsForPollAsync(pollId, cancellationToken);
@@ -25,6 +25,8 @@ public class QuestionsController : ControllerBase
 
     #region getQuestionById
     [HttpGet("getQuestion /{pollId}/{questionId}")]
+    [HasPermission(Permissions.GetQuestions)]
+
     public async Task<IActionResult> getQuestionByIdAsync(int pollId,int questionId,CancellationToken cancellationToken)
     {
         var question = await _questionservice.GetQuestionByIdAsync(pollId, questionId, cancellationToken);
@@ -37,6 +39,8 @@ public class QuestionsController : ControllerBase
 
     #region addQuestion
     [HttpPost("addQuestion /{pollId}")]
+    [HasPermission(Permissions.AddQuestions)]
+
     public async Task<IActionResult> addQuestionAsync(int pollId,QuestionRequestDTO question ,CancellationToken cancellationToken)
     {
         var addResponse = await _questionservice.AddQuestionAsync(pollId, question, cancellationToken);
@@ -49,6 +53,8 @@ public class QuestionsController : ControllerBase
 
     #region Update Question
     [HttpPut("UpdateQuestion/{pollId}/questions/{questionId}")]
+    [HasPermission(Permissions.UpdateQuestions)]
+
     public async Task<IActionResult> UpdateQuestionAsync(int pollId,int questionId,[FromBody] QuestionRequestDTO question,CancellationToken cancellationToken)
     {
         var result = await _questionservice
@@ -62,6 +68,7 @@ public class QuestionsController : ControllerBase
 
     #region Activate Question
     [HttpPut("activateQuestion /{pollId}/{questionId}")]
+    [HasPermission(Permissions.UpdateQuestions)]
     public async Task<IActionResult> activateQuestionAsync(int pollId,int questionId,CancellationToken cancellationToken)
     {
         var result = await _questionservice

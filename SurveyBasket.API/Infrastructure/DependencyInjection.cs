@@ -43,6 +43,9 @@
                 .AddEntityFrameworkStores<ApplicationDBContext>()
                 .AddDefaultTokenProviders();
 
+            services.AddTransient<IAuthorizationHandler, PermissionAuthorizationHandler>();
+            services.AddTransient<IAuthorizationPolicyProvider, PermissionAuthorizationPolicyProvider>();
+
             services.Configure<IdentityOptions>(options =>
             {
                 options.Password.RequiredLength = 8;

@@ -1,7 +1,6 @@
 ﻿namespace SurveyBasket.API.Controllers;
 [Route("api/[controller]")]
 [ApiController]
-[Authorize]
 
 public class PollsController : ControllerBase
 {
@@ -14,6 +13,7 @@ public class PollsController : ControllerBase
 
     #region getAllPolls
     [HttpGet("getAllPolls")]
+    [HasPermission(Permissions.GetPolls)]
     public async Task<IActionResult> GetAllPolls(CancellationToken cancellationToken)
     {
         var pollsResult = await _pollservice.getAllPollsAsync(cancellationToken);
@@ -26,6 +26,7 @@ public class PollsController : ControllerBase
 
     #region get Available Polls
     [HttpGet("getAvailablePolls")]
+    [HasPermission(Permissions.GetPolls)]
     public async Task<IActionResult> GetAvailablePolls(CancellationToken cancellationToken)
     {
         var pollsResult = await _pollservice.getAvailblePollsAsync(cancellationToken);
@@ -38,6 +39,7 @@ public class PollsController : ControllerBase
 
     #region getPollById
     [HttpGet("getPollById/{pollId}")]
+    [HasPermission(Permissions.GetPolls)]
     public async Task<IActionResult> GetPollById(int pollId, CancellationToken cancellationToken)
     {
         var pollResult = await _pollservice.getPollByIdAsync(pollId, cancellationToken);
@@ -50,6 +52,7 @@ public class PollsController : ControllerBase
 
     #region addPoll
     [HttpPost("addPoll")]
+    [HasPermission(Permissions.AddPolls)]
     public async Task<IActionResult> AddPoll([FromBody] PollRequestDTO pollRequest, CancellationToken cancellationToken)
     {
         var createdPoll = await _pollservice.AddPollAsync(pollRequest, cancellationToken);
@@ -62,6 +65,7 @@ public class PollsController : ControllerBase
 
     #region updatePoll
     [HttpPut("updatePoll/{pollId}")]
+    [HasPermission(Permissions.UpdatePolls)]
     public async Task<IActionResult> UpdatePoll(int pollId, [FromBody] PollRequestDTO pollRequest, CancellationToken cancellationToken)
     {
         var updatedPoll = await _pollservice.UpdatePollAsync(pollId, pollRequest, cancellationToken);
@@ -74,6 +78,7 @@ public class PollsController : ControllerBase
 
     #region deletePoll
     [HttpDelete("deletePoll/{pollId}")]
+    [HasPermission(Permissions.deletePolls)]
     public async Task<IActionResult> DeletePoll(int pollId, CancellationToken cancellationToken)
     {
         var isDeleted = await _pollservice.DeletePollAsync(pollId, cancellationToken);
@@ -86,6 +91,7 @@ public class PollsController : ControllerBase
 
     #region publishPoll
     [HttpPost("publishPoll/{pollId}")]
+    [HasPermission(Permissions.UpdatePolls)]
     public async Task<IActionResult> PublishPoll(int pollId, CancellationToken cancellationToken)
     {
         var publishedPoll = await _pollservice.publishToggle(pollId, cancellationToken);

@@ -16,7 +16,28 @@ public class RoleClaimConfiguration : IEntityTypeConfiguration<IdentityRoleClaim
                 RoleId = defaultRoles.AdminRoleId
             });
         }
-        builder.HasData(adminClaims);
+
+        var memberClaims = new List<IdentityRoleClaim<string>>
+        {
+
+            new IdentityRoleClaim<string>
+            {
+                Id = 100,
+                ClaimType = Permissions.Type,
+                ClaimValue = Permissions.GetPolls,
+                RoleId = defaultRoles.MemberRoleId
+            },
+            new IdentityRoleClaim<string>
+            {
+                Id = 101,
+                ClaimType = Permissions.Type,
+                ClaimValue = Permissions.GetQuestions,
+                RoleId = defaultRoles.MemberRoleId
+            }
+        };
+
+
+        builder.HasData(adminClaims.Concat(memberClaims));
 
     }
 }

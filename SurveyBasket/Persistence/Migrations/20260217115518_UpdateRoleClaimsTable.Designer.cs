@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using SurveyBasket.DAL.Persistence;
@@ -11,9 +12,11 @@ using SurveyBasket.DAL.Persistence;
 namespace SurveyBasket.DAL.Persistence.Migrations
 {
     [DbContext(typeof(ApplicationDBContext))]
-    partial class ApplicationDBContextModelSnapshot : ModelSnapshot
+    [Migration("20260217115518_UpdateRoleClaimsTable")]
+    partial class UpdateRoleClaimsTable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -144,20 +147,6 @@ namespace SurveyBasket.DAL.Persistence.Migrations
                             ClaimType = "permissions",
                             ClaimValue = "results:read",
                             RoleId = "31DBF7C3-FB22-4CBB-A1C5-3E84FC009AD1"
-                        },
-                        new
-                        {
-                            Id = 100,
-                            ClaimType = "permissions",
-                            ClaimValue = "polls:read",
-                            RoleId = "FA41809D-F0CF-48B4-A8B1-C29C42B9A2C4"
-                        },
-                        new
-                        {
-                            Id = 101,
-                            ClaimType = "permissions",
-                            ClaimValue = "questions:read",
-                            RoleId = "FA41809D-F0CF-48B4-A8B1-C29C42B9A2C4"
                         });
                 });
 

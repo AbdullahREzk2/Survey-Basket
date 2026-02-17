@@ -1,7 +1,7 @@
 ﻿namespace SurveyBasket.DAL.seedData;
 public static class Permissions
 {
-    public static string Type { get; } = "Permissions";
+    public static string Type { get; } = "permissions";
 
     public const string GetPolls = "polls:read";
     public const string AddPolls = "polls:add";
@@ -21,6 +21,7 @@ public static class Permissions
     public const string UpdateRoles = "roles:update";
 
     public const string Results = "results:read";
+
 
     public static IList<string?> GetAllPermissions()=>
        typeof(Permissions).GetFields().Select(x=>x.GetValue(x) as string).ToList();

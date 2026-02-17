@@ -1,6 +1,7 @@
 ﻿namespace SurveyBasket.API.Controllers;
 [Route("api/[controller]")]
 [ApiController]
+[HasPermission(Permissions.Results)]
 public class DashboardController : ControllerBase
 {
     private readonly IDashboardService _dashboardservice;
