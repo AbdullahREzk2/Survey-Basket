@@ -7,5 +7,10 @@ public interface IRoleRepository
     Task<bool> isRoleExist(string Name);
     Task<IdentityResult> CreateRole(ApplicationRole role);
     Task<IdentityResult> setPermissionsForRole(ApplicationRole role, IEnumerable<string> permissions);
+    Task<bool> isRoleNameExist(string RoleId , string Name);
+    Task<IdentityResult> UpdateRole(ApplicationRole role);
+    Task<IdentityResult> removePermissionForRole(string roleId, IEnumerable<string> removedPermissions);
+
+    Task<IDbContextTransaction> BeginTransactionAsync();
 
 }

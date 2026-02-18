@@ -16,4 +16,10 @@ public static class RoleErros
     public static Error PermissionAssignmentFailed =
         new("Role.PermissionAssignmentFailed", "Permission Assignment Failed ", StatusCodes.Status500InternalServerError);
 
+    public static Error UpdateFailed =
+        new("Role.UpdateFailed", "Update Failed ", StatusCodes.Status500InternalServerError);
+
+    public static Error PermissionRemovalFailed =
+        new("Role.PermissionRemovalFailed", "Permission Removal Failed", StatusCodes.Status400BadRequest);
+
 }

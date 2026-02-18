@@ -36,9 +36,23 @@ public class RolesController(IRoleService roleService) : ControllerBase
     {
         var createdRole = await _roleservice.CreateRole(request);
         return createdRole.IsSuccess ? 
-            Ok(createdRole.Value) 
+            CreatedAtAction(nameof(getRoleDetails),new { createdRole.Value.Id},createdRole.Value)
             : createdRole.ToProblem();
     }
     #endregion
+
+    #region update role
+    [HttpPut("updateRole/{RoleId}")]
+    [HasPermission(Permissions.UpdateRoles)]
+    public async Task<IActionResult> updateRole(string RoleId, RoleRequest request)
+    {
+        var updatedRole = await _roleservice.UpdateRole(RoleId, request);
+        return updatedRole.IsSuccess ? 
+            NoContent() 
+          : updatedRole.ToProblem();
+    }
+    #endregion
+
+
 
 }
