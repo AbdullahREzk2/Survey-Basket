@@ -38,3 +38,4 @@ global using SurveyBasket.BLL.Settings;
 global using SurveyBasket.BLL.Contracts.Users;
 global using SurveyBasket.BLL.Authantication;
 global using SurveyBasket.DAL.seedData;
+global using SurveyBasket.BLL.Contracts.Roles;

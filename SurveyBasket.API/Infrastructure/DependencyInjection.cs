@@ -66,6 +66,7 @@
             services.AddScoped<IVoteRepository, VoteRepository>();
             services.AddScoped<IDashboardRepository, DashboardRepository>();
             services.AddScoped<IUserRepository, UserRepository>();
+            services.AddScoped<IRoleRepository, RoleRepository>();
 
             return services;
         }
@@ -86,6 +87,7 @@
             services.AddScoped<IDashboardService, DashboardService>();
             services.AddScoped<INotificationService, NotificationService>();
             services.AddScoped<IUserService, UserService>();
+            services.AddScoped<IRoleService, RoleService>();
             return services;
         }
 

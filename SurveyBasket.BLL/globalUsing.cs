@@ -1,10 +1,4 @@
-﻿global using System;
-global using System.Collections.Generic;
-global using System.Linq;
-global using System.Text;
-global using System.Threading.Tasks;
-global using SurveyBasket.BLL.Contracts;
-global using SurveyBasket.BLL.Service;
+﻿global using System.Text;
 global using SurveyBasket.BLL.IService;
 global using SurveyBasket.DAL.IRepository;
 global using Mapster;
@@ -42,6 +36,7 @@ global using SurveyBasket.BLL.Contracts.Users;
 global using SurveyBasket.DAL.seedData;
 global using System.Text.Json;
 global using Microsoft.AspNetCore.Authorization;
+global using SurveyBasket.BLL.Contracts.Roles;
 
 
 
