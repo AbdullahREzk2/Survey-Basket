@@ -120,7 +120,19 @@ public class RoleService(IRoleRepository roleRepository) : IRoleService
         }
 
     }
+    public async Task<Result> RoleToggleStatus(string RoleId)
+    {
+        if (await _rolerepository.getRoleById(RoleId) is not { })
+            return Result.Failure(RoleErros.RoleNotFound);
 
+        var updatedResult = await _rolerepository.ToggleStatus(RoleId);
+
+        if (!updatedResult)
+            return Result.Failure(RoleErros.UpdateFailed);
+
+        return Result.Success();
+
+    }
 
 
 }

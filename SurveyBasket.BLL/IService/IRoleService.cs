@@ -5,4 +5,5 @@ public interface IRoleService
     Task<Result<RoleDetailResponse>> getRoleDetails(string RoleId);
     Task<Result<RoleDetailResponse>> CreateRole(RoleRequest request);
     Task<Result> UpdateRole(string RoleId, RoleRequest request);
+    Task<Result> RoleToggleStatus(string RoleId);
 }

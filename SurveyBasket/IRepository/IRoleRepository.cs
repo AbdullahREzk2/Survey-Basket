@@ -10,7 +10,7 @@ public interface IRoleRepository
     Task<bool> isRoleNameExist(string RoleId , string Name);
     Task<IdentityResult> UpdateRole(ApplicationRole role);
     Task<IdentityResult> removePermissionForRole(string roleId, IEnumerable<string> removedPermissions);
-
+    Task<bool> ToggleStatus(string roleId);
     Task<IDbContextTransaction> BeginTransactionAsync();
 
 }

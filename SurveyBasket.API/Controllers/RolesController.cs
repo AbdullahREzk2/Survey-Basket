@@ -53,6 +53,16 @@ public class RolesController(IRoleService roleService) : ControllerBase
     }
     #endregion
 
+    #region toggle status
+    [HttpPut("ToggleStatus/{roleId}")]
+    [HasPermission(Permissions.UpdateRoles)]
+    public async Task<IActionResult> updateToggleStatus(string roleId)
+    {
+        var updateResult = await _roleservice.RoleToggleStatus(roleId);
 
-
+        return updateResult.IsSuccess?
+             NoContent()
+            :updateResult.ToProblem();
+    }
+    #endregion
 }

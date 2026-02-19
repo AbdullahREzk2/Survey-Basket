@@ -61,11 +61,21 @@ public class RoleRepository(RoleManager<ApplicationRole> roleManager,Application
             .ExecuteDeleteAsync();
         return IdentityResult.Success;
     }
+    public async Task<bool> ToggleStatus(string roleId)
+    {
+        var role = await _rolemanager.FindByIdAsync(roleId);
+
+        role!.isDeleted =!role.isDeleted;
+
+        await _rolemanager.UpdateAsync(role);
+
+        return true;
+
+    }
 
     public async Task<IDbContextTransaction> BeginTransactionAsync()
     {
         return await _context.Database.BeginTransactionAsync();
     }
-
 
 }
