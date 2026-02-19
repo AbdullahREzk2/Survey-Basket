@@ -38,10 +38,13 @@ public class AuthService : IAuthService
         // check user 
         if (await _usermanager.FindByEmailAsync(Email) is not { } user)
             return Result.Failure<loginResponseDTO>(UserErrors.InvalidCredentials);
+        
+        if(user.isDisabled)
+            return Result.Failure<loginResponseDTO>(UserErrors.DisabledUser);
 
         // check password
-        var result = await _signinmanager.PasswordSignInAsync(user, Password, false, false);
-
+        var result = await _signinmanager.PasswordSignInAsync(user, Password, false, true);
+        
         if(result.Succeeded)
         {
             var userRoles = await _usermanager.GetRolesAsync(user);
@@ -66,8 +69,13 @@ public class AuthService : IAuthService
             var response = new loginResponseDTO(user.Id, user.Email!, user.UserName!, user.firstName, user.lastName, token, expireIn, refreshToken, refreshTokenExpiration);
             return Result.Success(response);
         }
+        var error = result.IsNotAllowed ?
+              UserErrors.EmailNotConfirmed
+            : result.IsLockedOut
+            ? UserErrors.UserLockedOut
+            : UserErrors.InvalidCredentials;
 
-        return Result.Failure<loginResponseDTO>(result.IsNotAllowed ? UserErrors.EmailNotConfirmed : UserErrors.InvalidCredentials);
+        return Result.Failure<loginResponseDTO>(error);
         
     }
     public async Task<Result<loginResponseDTO>> GetRefreshTokenAsync(string token, string refreshToken, CancellationToken cancellationToken)
@@ -81,6 +89,12 @@ public class AuthService : IAuthService
         var user = await _usermanager.FindByIdAsync(userId);
         if (user is null)
             return Result.Failure<loginResponseDTO>(UserErrors.UserNotFound);
+
+        if (user.isDisabled)
+            return Result.Failure<loginResponseDTO>(UserErrors.DisabledUser);
+
+        if (user.LockoutEnd >DateTime.UtcNow)
+            return Result.Failure<loginResponseDTO>(UserErrors.UserLockedOut);
 
         // get the refresh token from the user
         var userRefreshToken = user.refreshTokens.SingleOrDefault(rt => rt.Token == refreshToken && rt.IsActive);

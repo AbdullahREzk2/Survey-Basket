@@ -4,6 +4,9 @@ public static  class UserErrors
     public static Error InvalidCredentials =
         new("User.InvalidCredentials", "Invalid Email / Password",StatusCodes.Status401Unauthorized);
 
+    public static Error DisabledUser =
+        new("User.DisabledUser", "Disabled User plz Contact your Admin", StatusCodes.Status401Unauthorized);
+
     public static Error InvalidToken =
         new("User.InvalidToken", "The provided token is invalid or has expired.",StatusCodes.Status401Unauthorized);
 
@@ -24,4 +27,7 @@ public static  class UserErrors
 
     public static Error InvalidCode =
         new("User.InvalidCode", "Invalid Code ", StatusCodes.Status400BadRequest);
+
+    public static Error UserLockedOut =
+        new("User.UserLockedOut", "User LockedOut , try again after 5 min ", StatusCodes.Status401Unauthorized);
 }
