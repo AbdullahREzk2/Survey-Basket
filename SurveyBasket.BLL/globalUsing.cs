@@ -37,6 +37,7 @@ global using SurveyBasket.DAL.seedData;
 global using System.Text.Json;
 global using Microsoft.AspNetCore.Authorization;
 global using SurveyBasket.BLL.Contracts.Roles;
+global using SurveyBasket.DAL.Persistence;
 
 
 

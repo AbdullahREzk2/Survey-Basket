@@ -30,4 +30,7 @@ public static  class UserErrors
 
     public static Error UserLockedOut =
         new("User.UserLockedOut", "User LockedOut , try again after 5 min ", StatusCodes.Status401Unauthorized);
+
+    public static Error InvalidRoles =
+        new("User.InvalidRoles", "Invalid Roles", StatusCodes.Status400BadRequest);
 }
