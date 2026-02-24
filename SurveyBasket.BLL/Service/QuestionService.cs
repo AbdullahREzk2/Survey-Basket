@@ -1,4 +1,4 @@
-﻿  namespace SurveyBasket.BLL.Service;
+﻿namespace SurveyBasket.BLL.Service;
 public class QuestionService : IQuestionService
 {
     private readonly IQuestionRepository _questionrepository;
@@ -12,22 +12,24 @@ public class QuestionService : IQuestionService
         _voterepository = voteRepository;
     }
 
-    public async Task<Result<IReadOnlyList<QuestionResponseDTO>>>GetAllQuestionsForPollAsync(int pollId, CancellationToken cancellationToken)
+    public async Task<Result<PaginatedList<QuestionResponseDTO>>>GetAllQuestionsForPollAsync(int pollId,RequestFilters filters, CancellationToken cancellationToken)
     {
         var isPollExist = await _pollrepository.getPollByIdAsync(pollId,cancellationToken);
 
         if (isPollExist == null)
-            return Result.Failure<IReadOnlyList<QuestionResponseDTO>>(PollErrors.PollNotFound);
+            return Result.Failure<PaginatedList<QuestionResponseDTO>>(PollErrors.PollNotFound);
 
-        var questions = await _questionrepository.GetAllQuestionsForPollAsync(pollId, cancellationToken);
+        var query = _questionrepository.GetAllQuestionsForPollAsync(pollId);
 
-        if (!questions.Any())
-            return Result.Failure<IReadOnlyList<QuestionResponseDTO>>(
+        if (!query.Any())
+            return Result.Failure<PaginatedList<QuestionResponseDTO>>(
                 QuestionErrors.QuestionNotFound);
 
-        var response = questions.Adapt<IReadOnlyList<QuestionResponseDTO>>();
+        var projectedQuery = query.ProjectToType<QuestionResponseDTO>();
 
-        return Result.Success(response);
+        var result = await PaginatedList<QuestionResponseDTO> .CreateAsync(projectedQuery,filters.PageNumber,filters.PageSize,cancellationToken);
+
+        return Result.Success(result);
     }
     public async Task<Result<IEnumerable<QuestionResponseDTO>>> GetAvailableQuestionsAsync(int pollId, string userId, CancellationToken cancellationToken)
     {

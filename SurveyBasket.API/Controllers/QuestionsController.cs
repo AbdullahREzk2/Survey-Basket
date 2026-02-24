@@ -13,9 +13,9 @@ public class QuestionsController : ControllerBase
    #region getAllQuestionsForPoll
     [HttpGet("getAllQuestions / {pollId}")]
     [HasPermission(Permissions.GetQuestions)]
-    public async Task<IActionResult> getAllQuestionsForPollAsync(int pollId,CancellationToken cancellationToken)
+    public async Task<IActionResult> getAllQuestionsForPollAsync(int pollId, [FromQuery] RequestFilters filters,CancellationToken cancellationToken)
     {
-        var questionsResult = await _questionservice.GetAllQuestionsForPollAsync(pollId, cancellationToken);
+        var questionsResult = await _questionservice.GetAllQuestionsForPollAsync(pollId,filters ,cancellationToken);
 
         return questionsResult.IsSuccess
             ? Ok(questionsResult.Value)

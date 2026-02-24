@@ -8,13 +8,12 @@ public class QuestionRepository : IQuestionRepository
         _context = context;
     }
 
-    public async Task<IReadOnlyList<Question>> GetAllQuestionsForPollAsync(int pollId,CancellationToken cancellationToken)
+    public IQueryable<Question> GetAllQuestionsForPollAsync(int pollId)
     {
-        return await _context.Questions
+        return  _context.Questions
             .Where(q => q.PollId == pollId)
-            .Include(q=>q.answers.Where(a=>a.isActive))
-            .AsNoTracking()
-            .ToListAsync(cancellationToken);
+            .Include(q => q.answers.Where(a => a.isActive))
+            .AsNoTracking();
     }
     public async Task<IReadOnlyList<Question>> GetAvailbaleForPollAsync(int pollId, CancellationToken cancellationToken)
     {
