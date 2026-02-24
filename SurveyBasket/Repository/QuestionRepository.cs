@@ -8,10 +8,10 @@ public class QuestionRepository : IQuestionRepository
         _context = context;
     }
 
-    public IQueryable<Question> GetAllQuestionsForPollAsync(int pollId)
+    public IQueryable<Question> GetAllQuestionsForPollAsync(int pollId, string searchValue)
     {
         return  _context.Questions
-            .Where(q => q.PollId == pollId)
+            .Where(q => q.PollId == pollId && (string.IsNullOrEmpty(searchValue) || q.Content.Contains(searchValue)))
             .Include(q => q.answers.Where(a => a.isActive))
             .AsNoTracking();
     }
