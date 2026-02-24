@@ -19,7 +19,7 @@ public class QuestionService : IQuestionService
         if (isPollExist == null)
             return Result.Failure<PaginatedList<QuestionResponseDTO>>(PollErrors.PollNotFound);
 
-        var query = _questionrepository.GetAllQuestionsForPollAsync(pollId,filters.SearchValue!);
+        var query = _questionrepository.GetAllQuestionsForPollAsync(pollId,filters.SearchValue!,filters.SortColumn!,filters.SortDirection!);
 
         if (!query.Any())
             return Result.Failure<PaginatedList<QuestionResponseDTO>>(

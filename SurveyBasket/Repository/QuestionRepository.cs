@@ -8,12 +8,24 @@ public class QuestionRepository : IQuestionRepository
         _context = context;
     }
 
-    public IQueryable<Question> GetAllQuestionsForPollAsync(int pollId, string searchValue)
+    public IQueryable<Question> GetAllQuestionsForPollAsync(int pollId, string searchValue,string sortColumn,string sortDirection)
     {
-        return  _context.Questions
-            .Where(q => q.PollId == pollId && (string.IsNullOrEmpty(searchValue) || q.Content.Contains(searchValue)))
-            .Include(q => q.answers.Where(a => a.isActive))
-            .AsNoTracking();
+        var query = _context.Questions
+            .Where(q => q.PollId == pollId);
+
+        if (!string.IsNullOrEmpty(searchValue))
+        {
+            query = query.Where(q => q.Content.Contains(searchValue));
+        }
+        if (!string.IsNullOrEmpty(sortColumn))
+        {
+            query = query.OrderBy($"{sortColumn} {sortDirection}");
+        }
+
+        var source = query
+                .Include(q => q.answers.Where(a => a.isActive))
+                .AsNoTracking();
+        return source;
     }
     public async Task<IReadOnlyList<Question>> GetAvailbaleForPollAsync(int pollId, CancellationToken cancellationToken)
     {

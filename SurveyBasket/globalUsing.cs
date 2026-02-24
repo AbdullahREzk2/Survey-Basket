@@ -15,4 +15,5 @@ global using Microsoft.AspNetCore.Identity;
 global using SurveyBasket.DAL.DTO;
 global using SurveyBasket.DAL.seedData;
 global using Microsoft.EntityFrameworkCore.Storage;
+global using System.Linq.Dynamic.Core;
 
