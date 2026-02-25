@@ -1,4 +1,6 @@
-﻿namespace SurveyBasket.API.Infrastructure
+﻿using SurveyBasket.API.Health;
+
+namespace SurveyBasket.API.Infrastructure
 {
     public static class DependencyInjection
     {
@@ -14,7 +16,8 @@
                 .AddJwtAuthentication(configuration)
                 .AddExceptionHandling()
                 .AddMailServices(configuration)
-                .AddHangfireServices(configuration);
+                .AddHangfireServices(configuration)
+                .AddhealthChecks();
 
             return services;
         }
@@ -88,12 +91,6 @@
             services.AddScoped<INotificationService, NotificationService>();
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<IRoleService, RoleService>();
-
-            services.AddHealthChecks()
-                .AddDbContextCheck<ApplicationDBContext>(name:"database")
-                .AddHangfire(options => { options.MinimumAvailableServers = 1; });
-                
-
 
             return services;
         }
@@ -218,7 +215,19 @@
             return services;
         }
 
+        // =========================
+        // Health checks
+        // =========================
+        private static IServiceCollection AddhealthChecks(this IServiceCollection services)
+        {
 
+            services.AddHealthChecks()
+                .AddDbContextCheck<ApplicationDBContext>(name: "database")
+                .AddHangfire(options => { options.MinimumAvailableServers = 1; })
+                .AddCheck<MailHealthChecks>(name:"Mail Service");
+
+            return services;
+        }
 
     }
 }
