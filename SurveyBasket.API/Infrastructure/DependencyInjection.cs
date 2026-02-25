@@ -90,7 +90,8 @@
             services.AddScoped<IRoleService, RoleService>();
 
             services.AddHealthChecks()
-                .AddDbContextCheck<ApplicationDBContext>(name:"database");
+                .AddDbContextCheck<ApplicationDBContext>(name:"database")
+                .AddHangfire(options => { options.MinimumAvailableServers = 1; });
                 
 
 
