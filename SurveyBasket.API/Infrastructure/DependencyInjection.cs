@@ -88,6 +88,12 @@
             services.AddScoped<INotificationService, NotificationService>();
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<IRoleService, RoleService>();
+
+            services.AddHealthChecks()
+                .AddDbContextCheck<ApplicationDBContext>(name:"database");
+                
+
+
             return services;
         }
 

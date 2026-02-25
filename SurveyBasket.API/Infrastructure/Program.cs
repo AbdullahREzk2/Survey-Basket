@@ -1,6 +1,6 @@
-using Hangfire.Dashboard;
 using HangfireBasicAuthenticationFilter;
-
+using HealthChecks.UI.Client;
+using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 namespace SurveyBasket.API.Infrastructure
 {
     public class Program
@@ -64,6 +64,11 @@ namespace SurveyBasket.API.Infrastructure
             app.MapControllers();
 
             app.UseExceptionHandler();
+
+            app.MapHealthChecks("health",new HealthCheckOptions
+            {
+                ResponseWriter = UIResponseWriter.WriteHealthCheckUIResponse
+            });
 
             app.Run();
 
