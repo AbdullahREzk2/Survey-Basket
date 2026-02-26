@@ -1,4 +1,6 @@
-﻿using SurveyBasket.API.Health;
+﻿using System.Threading.RateLimiting;
+using Microsoft.AspNetCore.RateLimiting;
+using SurveyBasket.API.Health;
 
 namespace SurveyBasket.API.Infrastructure
 {
@@ -17,7 +19,9 @@ namespace SurveyBasket.API.Infrastructure
                 .AddExceptionHandling()
                 .AddMailServices(configuration)
                 .AddHangfireServices(configuration)
-                .AddhealthChecks();
+                .AddhealthChecks()
+                .AddRateLimiting();
+
 
             return services;
         }
@@ -228,6 +232,30 @@ namespace SurveyBasket.API.Infrastructure
 
             return services;
         }
+
+        // =========================
+        // Rate Limiting
+        // =========================
+        private static IServiceCollection AddRateLimiting(this IServiceCollection services)
+        {
+            services.AddRateLimiter(options =>
+            {
+                options.RejectionStatusCode = StatusCodes.Status429TooManyRequests;
+
+                options.AddPolicy("ipLimit", httpContext =>
+                    RateLimitPartition.GetFixedWindowLimiter(
+                        partitionKey: httpContext.Connection.RemoteIpAddress?.ToString() ?? "unknown",
+                        factory: _ => new FixedWindowRateLimiterOptions
+                        {
+                            PermitLimit = 2,
+                            Window = TimeSpan.FromSeconds(10)
+                        }
+                    ));
+            });
+
+            return services;
+        }
+
 
     }
 }

@@ -57,6 +57,8 @@ namespace SurveyBasket.API.Infrastructure
             var notificationService = scope.ServiceProvider.GetRequiredService<INotificationService>();
             RecurringJob.AddOrUpdate("sendNewNotificationPollAsync", () => notificationService.sendNewNotificationPollAsync(null,CancellationToken.None), Cron.Daily);
 
+            app.UseRateLimiter();
+
             app.UseAuthentication();
 
             app.UseAuthorization();
