@@ -22,8 +22,6 @@ namespace SurveyBasket.API.Infrastructure
                 options.RegisterValidatorsFromAssemblyContaining<PollRequestValidation>();
             });
 
-            builder.Services.AddOpenApi();
-
 
             var app = builder.Build();
 

@@ -1,5 +1,6 @@
 ﻿using System.Threading.RateLimiting;
 using Microsoft.AspNetCore.RateLimiting;
+using Microsoft.OpenApi.Models;
 using SurveyBasket.API.Health;
 
 namespace SurveyBasket.API.Infrastructure
@@ -20,7 +21,8 @@ namespace SurveyBasket.API.Infrastructure
                 .AddMailServices(configuration)
                 .AddHangfireServices(configuration)
                 .AddhealthChecks()
-                .AddRateLimiting();
+                .AddRateLimiting()
+                .AddOpenApiWithJwt();
 
 
             return services;
@@ -256,6 +258,53 @@ namespace SurveyBasket.API.Infrastructure
             return services;
         }
 
+        // =========================
+        // OpenAPI + Scalar JWT
+        // =========================
+        private static IServiceCollection AddOpenApiWithJwt(this IServiceCollection services)
+        {
+            services.AddOpenApi(options =>
+            {
+                options.AddDocumentTransformer((document, context, cancellationToken) =>
+                {
+                    document.Components ??= new();
+                    document.Components.SecuritySchemes ??= new Dictionary<string, OpenApiSecurityScheme>();
+
+                    document.Components.SecuritySchemes["Bearer"] =
+                        new OpenApiSecurityScheme
+                        {
+                            Type = SecuritySchemeType.Http,
+                            Scheme = "bearer",
+                            BearerFormat = "JWT",
+                            In = ParameterLocation.Header,
+                            Name = "Authorization",
+                            Description = "Enter your JWT token"
+                        };
+
+                    document.SecurityRequirements ??= new List<OpenApiSecurityRequirement>();
+
+                    document.SecurityRequirements.Add(
+                        new OpenApiSecurityRequirement
+                        {
+                    {
+                        new OpenApiSecurityScheme
+                        {
+                            Reference = new OpenApiReference
+                            {
+                                Type = ReferenceType.SecurityScheme,
+                                Id = "Bearer"
+                            }
+                        },
+                        Array.Empty<string>()
+                    }
+                        });
+
+                    return Task.CompletedTask;
+                });
+            });
+
+            return services;
+        }
 
     }
 }
