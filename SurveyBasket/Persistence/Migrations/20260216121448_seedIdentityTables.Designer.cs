@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using SurveyBasket.DAL.Persistence;
@@ -11,9 +12,11 @@ using SurveyBasket.DAL.Persistence;
 namespace SurveyBasket.DAL.Persistence.Migrations
 {
     [DbContext(typeof(ApplicationDBContext))]
-    partial class ApplicationDBContextModelSnapshot : ModelSnapshot
+    [Migration("20260216121448_seedIdentityTables")]
+    partial class seedIdentityTables
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -50,114 +53,100 @@ namespace SurveyBasket.DAL.Persistence.Migrations
                         new
                         {
                             Id = 1,
-                            ClaimType = "permissions",
+                            ClaimType = "Permissions",
                             ClaimValue = "polls:read",
                             RoleId = "31DBF7C3-FB22-4CBB-A1C5-3E84FC009AD1"
                         },
                         new
                         {
                             Id = 2,
-                            ClaimType = "permissions",
+                            ClaimType = "Permissions",
                             ClaimValue = "polls:add",
                             RoleId = "31DBF7C3-FB22-4CBB-A1C5-3E84FC009AD1"
                         },
                         new
                         {
                             Id = 3,
-                            ClaimType = "permissions",
+                            ClaimType = "Permissions",
                             ClaimValue = "polls:update",
                             RoleId = "31DBF7C3-FB22-4CBB-A1C5-3E84FC009AD1"
                         },
                         new
                         {
                             Id = 4,
-                            ClaimType = "permissions",
+                            ClaimType = "Permissions",
                             ClaimValue = "polls:delete",
                             RoleId = "31DBF7C3-FB22-4CBB-A1C5-3E84FC009AD1"
                         },
                         new
                         {
                             Id = 5,
-                            ClaimType = "permissions",
+                            ClaimType = "Permissions",
                             ClaimValue = "questions:read",
                             RoleId = "31DBF7C3-FB22-4CBB-A1C5-3E84FC009AD1"
                         },
                         new
                         {
                             Id = 6,
-                            ClaimType = "permissions",
+                            ClaimType = "Permissions",
                             ClaimValue = "questions:add",
                             RoleId = "31DBF7C3-FB22-4CBB-A1C5-3E84FC009AD1"
                         },
                         new
                         {
                             Id = 7,
-                            ClaimType = "permissions",
+                            ClaimType = "Permissions",
                             ClaimValue = "questions:update",
                             RoleId = "31DBF7C3-FB22-4CBB-A1C5-3E84FC009AD1"
                         },
                         new
                         {
                             Id = 8,
-                            ClaimType = "permissions",
+                            ClaimType = "Permissions",
                             ClaimValue = "users:read",
                             RoleId = "31DBF7C3-FB22-4CBB-A1C5-3E84FC009AD1"
                         },
                         new
                         {
                             Id = 9,
-                            ClaimType = "permissions",
+                            ClaimType = "Permissions",
                             ClaimValue = "users:add",
                             RoleId = "31DBF7C3-FB22-4CBB-A1C5-3E84FC009AD1"
                         },
                         new
                         {
                             Id = 10,
-                            ClaimType = "permissions",
+                            ClaimType = "Permissions",
                             ClaimValue = "users:update",
                             RoleId = "31DBF7C3-FB22-4CBB-A1C5-3E84FC009AD1"
                         },
                         new
                         {
                             Id = 11,
-                            ClaimType = "permissions",
+                            ClaimType = "Permissions",
                             ClaimValue = "roles:read",
                             RoleId = "31DBF7C3-FB22-4CBB-A1C5-3E84FC009AD1"
                         },
                         new
                         {
                             Id = 12,
-                            ClaimType = "permissions",
+                            ClaimType = "Permissions",
                             ClaimValue = "roles:add",
                             RoleId = "31DBF7C3-FB22-4CBB-A1C5-3E84FC009AD1"
                         },
                         new
                         {
                             Id = 13,
-                            ClaimType = "permissions",
+                            ClaimType = "Permissions",
                             ClaimValue = "roles:update",
                             RoleId = "31DBF7C3-FB22-4CBB-A1C5-3E84FC009AD1"
                         },
                         new
                         {
                             Id = 14,
-                            ClaimType = "permissions",
+                            ClaimType = "Permissions",
                             ClaimValue = "results:read",
                             RoleId = "31DBF7C3-FB22-4CBB-A1C5-3E84FC009AD1"
-                        },
-                        new
-                        {
-                            Id = 100,
-                            ClaimType = "permissions",
-                            ClaimValue = "polls:read",
-                            RoleId = "FA41809D-F0CF-48B4-A8B1-C29C42B9A2C4"
-                        },
-                        new
-                        {
-                            Id = 101,
-                            ClaimType = "permissions",
-                            ClaimValue = "questions:read",
-                            RoleId = "FA41809D-F0CF-48B4-A8B1-C29C42B9A2C4"
                         });
                 });
 
@@ -402,9 +391,6 @@ namespace SurveyBasket.DAL.Persistence.Migrations
                         .HasMaxLength(50)
                         .HasColumnType("character varying(50)");
 
-                    b.Property<bool>("isDisabled")
-                        .HasColumnType("boolean");
-
                     b.Property<string>("lastName")
                         .IsRequired()
                         .HasMaxLength(50)
@@ -438,7 +424,6 @@ namespace SurveyBasket.DAL.Persistence.Migrations
                             TwoFactorEnabled = false,
                             UserName = "admin@survey-basket.com",
                             firstName = "Admin",
-                            isDisabled = false,
                             lastName = "Admin"
                         });
                 });

@@ -3,6 +3,7 @@ global using System.Text;
 global using FluentValidation;
 global using FluentValidation.AspNetCore;
 global using Hangfire;
+global using Hangfire.PostgreSql;
 global using Mapster;
 global using MapsterMapper;
 global using Microsoft.AspNetCore.Authentication.JwtBearer;

@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using SurveyBasket.DAL.Persistence;
@@ -11,9 +12,11 @@ using SurveyBasket.DAL.Persistence;
 namespace SurveyBasket.DAL.Persistence.Migrations
 {
     [DbContext(typeof(ApplicationDBContext))]
-    partial class ApplicationDBContextModelSnapshot : ModelSnapshot
+    [Migration("20260217130505_addMembersPermissions")]
+    partial class addMembersPermissions
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -402,9 +405,6 @@ namespace SurveyBasket.DAL.Persistence.Migrations
                         .HasMaxLength(50)
                         .HasColumnType("character varying(50)");
 
-                    b.Property<bool>("isDisabled")
-                        .HasColumnType("boolean");
-
                     b.Property<string>("lastName")
                         .IsRequired()
                         .HasMaxLength(50)
@@ -438,7 +438,6 @@ namespace SurveyBasket.DAL.Persistence.Migrations
                             TwoFactorEnabled = false,
                             UserName = "admin@survey-basket.com",
                             firstName = "Admin",
-                            isDisabled = false,
                             lastName = "Admin"
                         });
                 });
