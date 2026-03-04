@@ -6,5 +6,5 @@ public class AnswerResponseDTO
     public bool isActive { get; set; }
 
 }
-  
+
 

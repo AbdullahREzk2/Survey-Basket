@@ -9,7 +9,7 @@ public class GlobalExceptionsHandler : IExceptionHandler
     }
     public async ValueTask<bool> TryHandleAsync(HttpContext httpContext, Exception exception, CancellationToken cancellationToken)
     {
-      _logger.LogError(exception, "Something Went Wrong :{ Message}",exception.Message);
+        _logger.LogError(exception, "Something Went Wrong :{ Message}", exception.Message);
 
         var problemDetails = new ProblemDetails
         {
@@ -19,7 +19,7 @@ public class GlobalExceptionsHandler : IExceptionHandler
         };
 
         httpContext.Response.StatusCode = StatusCodes.Status500InternalServerError;
-        await httpContext.Response.WriteAsJsonAsync(problemDetails,cancellationToken);
+        await httpContext.Response.WriteAsJsonAsync(problemDetails, cancellationToken);
         return true;
     }
 

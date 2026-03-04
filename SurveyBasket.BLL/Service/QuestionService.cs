@@ -5,21 +5,21 @@ public class QuestionService : IQuestionService
     private readonly IPollRepository _pollrepository;
     private readonly IVoteRepository _voterepository;
 
-    public QuestionService(IQuestionRepository questionRepository,IPollRepository pollRepository,IVoteRepository voteRepository)
+    public QuestionService(IQuestionRepository questionRepository, IPollRepository pollRepository, IVoteRepository voteRepository)
     {
         _questionrepository = questionRepository;
         _pollrepository = pollRepository;
         _voterepository = voteRepository;
     }
 
-    public async Task<Result<PaginatedList<QuestionResponseDTO>>>GetAllQuestionsForPollAsync(int pollId,RequestFilters filters, CancellationToken cancellationToken)
+    public async Task<Result<PaginatedList<QuestionResponseDTO>>> GetAllQuestionsForPollAsync(int pollId, RequestFilters filters, CancellationToken cancellationToken)
     {
-        var isPollExist = await _pollrepository.getPollByIdAsync(pollId,cancellationToken);
+        var isPollExist = await _pollrepository.getPollByIdAsync(pollId, cancellationToken);
 
         if (isPollExist == null)
             return Result.Failure<PaginatedList<QuestionResponseDTO>>(PollErrors.PollNotFound);
 
-        var query = _questionrepository.GetAllQuestionsForPollAsync(pollId,filters.SearchValue!,filters.SortColumn!,filters.SortDirection!);
+        var query = _questionrepository.GetAllQuestionsForPollAsync(pollId, filters.SearchValue!, filters.SortColumn!, filters.SortDirection!);
 
         if (!query.Any())
             return Result.Failure<PaginatedList<QuestionResponseDTO>>(
@@ -27,7 +27,7 @@ public class QuestionService : IQuestionService
 
         var projectedQuery = query.ProjectToType<QuestionResponseDTO>();
 
-        var result = await PaginatedList<QuestionResponseDTO> .CreateAsync(projectedQuery,filters.PageNumber,filters.PageSize,cancellationToken);
+        var result = await PaginatedList<QuestionResponseDTO>.CreateAsync(projectedQuery, filters.PageNumber, filters.PageSize, cancellationToken);
 
         return Result.Success(result);
     }
@@ -49,7 +49,7 @@ public class QuestionService : IQuestionService
 
         return Result.Success(questionResponses);
     }
-    public async Task<Result<QuestionResponseDTO>>GetQuestionByIdAsync(int pollId, int questionId, CancellationToken cancellationToken)
+    public async Task<Result<QuestionResponseDTO>> GetQuestionByIdAsync(int pollId, int questionId, CancellationToken cancellationToken)
     {
         var isPollExist = await _pollrepository.getPollByIdAsync(pollId, cancellationToken);
 
@@ -65,7 +65,7 @@ public class QuestionService : IQuestionService
 
         return Result.Success(response);
     }
-    public async Task<Result<QuestionResponseDTO>> AddQuestionAsync(int pollId,QuestionRequestDTO question,CancellationToken cancellationToken)
+    public async Task<Result<QuestionResponseDTO>> AddQuestionAsync(int pollId, QuestionRequestDTO question, CancellationToken cancellationToken)
     {
         var poll = await _pollrepository
             .getPollByIdAsync(pollId, cancellationToken);
@@ -96,7 +96,7 @@ public class QuestionService : IQuestionService
             : Result.Failure<QuestionResponseDTO>(
                 QuestionErrors.QuestionCreationFailed);
     }
-    public async Task<Result> UpdateQuestionAsync(int pollId,int questionId,QuestionRequestDTO question,CancellationToken cancellationToken)
+    public async Task<Result> UpdateQuestionAsync(int pollId, int questionId, QuestionRequestDTO question, CancellationToken cancellationToken)
     {
         var questionEntity = await _questionrepository
             .GetQuestionByIdAsync(pollId, questionId, cancellationToken);
@@ -149,7 +149,7 @@ public class QuestionService : IQuestionService
     public async Task<Result> activeToggleQuestion(int pollId, int questionId, CancellationToken cancellationToken)
     {
         var isUpdated = await _questionrepository.activeToggleQuestion(pollId, questionId, cancellationToken);
-        
+
         if (isUpdated)
             return Result.Success();
 

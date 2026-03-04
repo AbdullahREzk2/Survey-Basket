@@ -10,7 +10,7 @@ public class UsersController(IUserService userService) : ControllerBase
     [HasPermission(Permissions.GetUsers)]
     public async Task<IActionResult> getAllUsers(CancellationToken cancellationToken)
     {
-        return Ok(await _userservice.GetAllUsersAsync(cancellationToken));       
+        return Ok(await _userservice.GetAllUsersAsync(cancellationToken));
     }
     #endregion
 
@@ -22,19 +22,19 @@ public class UsersController(IUserService userService) : ControllerBase
         var userDetails = await _userservice.GetUserDetailsAsync(userId);
         return userDetails.IsSuccess ?
               Ok(userDetails.Value)
-            : userDetails.ToProblem(); 
+            : userDetails.ToProblem();
     }
     #endregion
 
     #region create new User
     [HttpPost("create-user")]
     [HasPermission(Permissions.AddUsers)]
-    public async Task<IActionResult> Create([FromBody] CreateUserRequest request,CancellationToken cancellationToken)
+    public async Task<IActionResult> Create([FromBody] CreateUserRequest request, CancellationToken cancellationToken)
     {
-        var result = await _userservice.createUserAsync(request,cancellationToken);
+        var result = await _userservice.createUserAsync(request, cancellationToken);
 
-        return result.IsSuccess?
-            CreatedAtAction(nameof(getUserDetails), new {userId = result.Value.Id },result.Value)
+        return result.IsSuccess ?
+            CreatedAtAction(nameof(getUserDetails), new { userId = result.Value.Id }, result.Value)
             : result.ToProblem();
     }
     #endregion
@@ -42,10 +42,10 @@ public class UsersController(IUserService userService) : ControllerBase
     #region update User
     [HttpPut("update-user/{userId}")]
     [HasPermission(Permissions.UpdateUsers)]
-    public async Task<IActionResult> Update(string userId, [FromBody] UpdateUserRequest request,CancellationToken cancellationToken)
+    public async Task<IActionResult> Update(string userId, [FromBody] UpdateUserRequest request, CancellationToken cancellationToken)
     {
-        var result = await _userservice.updateUserAsync(userId,request,cancellationToken);
-        return result.IsSuccess?
+        var result = await _userservice.updateUserAsync(userId, request, cancellationToken);
+        return result.IsSuccess ?
             NoContent()
           : result.ToProblem();
     }
@@ -57,7 +57,7 @@ public class UsersController(IUserService userService) : ControllerBase
     public async Task<IActionResult> ToggleStatus(string userId)
     {
         var result = await _userservice.toggleStatusAsync(userId);
-        return result.IsSuccess?
+        return result.IsSuccess ?
             NoContent()
           : result.ToProblem();
     }
@@ -69,7 +69,7 @@ public class UsersController(IUserService userService) : ControllerBase
     public async Task<IActionResult> Unlock(string userId)
     {
         var result = await _userservice.unlockUserAsync(userId);
-        return result.IsSuccess?
+        return result.IsSuccess ?
             NoContent()
           : result.ToProblem();
     }

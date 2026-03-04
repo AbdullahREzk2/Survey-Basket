@@ -1,5 +1,5 @@
 ﻿namespace SurveyBasket.BLL.Contracts.Votes;
-public class VoteRequestValidations:AbstractValidator<VoteRequest>
+public class VoteRequestValidations : AbstractValidator<VoteRequest>
 {
     public VoteRequestValidations()
     {

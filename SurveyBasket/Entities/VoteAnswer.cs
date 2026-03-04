@@ -9,5 +9,5 @@ public sealed class VoteAnswer
     public Vote Vote { get; set; } = default!;
     public Question question { get; set; } = default!;
     public Answer Answer { get; set; } = default!;
-    
+
 }

@@ -1,12 +1,12 @@
-﻿using MailKit.Security;
+﻿using MailKit.Net.Smtp;
+using MailKit.Security;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
-using MailKit.Net.Smtp;
 
 namespace SurveyBasket.API.Health;
 
 public class MailHealthChecks(IOptions<MailSettings> mailSettings) : IHealthCheck
 {
-    private readonly MailSettings _mailSettings = mailSettings.Value;    
+    private readonly MailSettings _mailSettings = mailSettings.Value;
     public async Task<HealthCheckResult> CheckHealthAsync(HealthCheckContext context, CancellationToken cancellationToken = default)
     {
         try
@@ -18,9 +18,9 @@ public class MailHealthChecks(IOptions<MailSettings> mailSettings) : IHealthChec
 
             return await Task.FromResult(HealthCheckResult.Healthy());
         }
-        catch(Exception ex)
+        catch (Exception ex)
         {
-            return await Task.FromResult(HealthCheckResult.Unhealthy(exception:ex));
+            return await Task.FromResult(HealthCheckResult.Unhealthy(exception: ex));
 
         }
     }

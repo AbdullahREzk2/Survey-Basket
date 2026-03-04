@@ -8,10 +8,10 @@ public class RolesController(IRoleService roleService) : ControllerBase
 
     #region get all roles
     [HttpGet("getAllRoles")]
-    [HasPermission(Permissions.GetRoles)] 
-    public async Task<IActionResult> getAllRoles([FromQuery] bool includeDisabled,CancellationToken cancellationToken)
+    [HasPermission(Permissions.GetRoles)]
+    public async Task<IActionResult> getAllRoles([FromQuery] bool includeDisabled, CancellationToken cancellationToken)
     {
-        var roles = await _roleservice.getAllRoles(includeDisabled,cancellationToken);
+        var roles = await _roleservice.getAllRoles(includeDisabled, cancellationToken);
         return Ok(roles);
     }
     #endregion
@@ -21,10 +21,10 @@ public class RolesController(IRoleService roleService) : ControllerBase
     [HasPermission(Permissions.GetRoles)]
     public async Task<IActionResult> getRoleDetails(string RoleId)
     {
-        var roleDetails  = await _roleservice.getRoleDetails(RoleId);
+        var roleDetails = await _roleservice.getRoleDetails(RoleId);
 
-        return roleDetails.IsSuccess ? 
-             Ok(roleDetails.Value) 
+        return roleDetails.IsSuccess ?
+             Ok(roleDetails.Value)
             : roleDetails.ToProblem();
     }
     #endregion
@@ -32,11 +32,11 @@ public class RolesController(IRoleService roleService) : ControllerBase
     #region create role
     [HttpPost("createRole")]
     [HasPermission(Permissions.AddRoles)]
-    public async Task<IActionResult> createRole(RoleRequest request,CancellationToken cancellationToken)
+    public async Task<IActionResult> createRole(RoleRequest request, CancellationToken cancellationToken)
     {
         var createdRole = await _roleservice.CreateRole(request);
-        return createdRole.IsSuccess ? 
-            CreatedAtAction(nameof(getRoleDetails),new { createdRole.Value.Id},createdRole.Value)
+        return createdRole.IsSuccess ?
+            CreatedAtAction(nameof(getRoleDetails), new { createdRole.Value.Id }, createdRole.Value)
             : createdRole.ToProblem();
     }
     #endregion
@@ -47,8 +47,8 @@ public class RolesController(IRoleService roleService) : ControllerBase
     public async Task<IActionResult> updateRole(string RoleId, RoleRequest request)
     {
         var updatedRole = await _roleservice.UpdateRole(RoleId, request);
-        return updatedRole.IsSuccess ? 
-            NoContent() 
+        return updatedRole.IsSuccess ?
+            NoContent()
           : updatedRole.ToProblem();
     }
     #endregion
@@ -60,9 +60,9 @@ public class RolesController(IRoleService roleService) : ControllerBase
     {
         var updateResult = await _roleservice.RoleToggleStatus(roleId);
 
-        return updateResult.IsSuccess?
+        return updateResult.IsSuccess ?
              NoContent()
-            :updateResult.ToProblem();
+            : updateResult.ToProblem();
     }
     #endregion
 }

@@ -5,14 +5,14 @@ public class VoteService : IVoteService
     private readonly IVoteRepository _voterepository;
     private readonly IQuestionRepository _questionrepository;
 
-    public VoteService (IPollRepository pollRepository,IVoteRepository voteRepository,IQuestionRepository questionRepository)
+    public VoteService(IPollRepository pollRepository, IVoteRepository voteRepository, IQuestionRepository questionRepository)
     {
         _pollrepository = pollRepository;
         _voterepository = voteRepository;
         _questionrepository = questionRepository;
     }
 
-    public async Task<Result> AddVoteAsync(int pollId,string userId,VoteRequest voteRequest,CancellationToken cancellationToken)
+    public async Task<Result> AddVoteAsync(int pollId, string userId, VoteRequest voteRequest, CancellationToken cancellationToken)
     {
         var hasVoted = await _voterepository
             .HasUserVotedAsync(pollId, userId, cancellationToken);

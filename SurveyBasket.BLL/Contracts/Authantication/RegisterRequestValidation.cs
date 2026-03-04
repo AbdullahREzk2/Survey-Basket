@@ -1,9 +1,9 @@
 ﻿namespace SurveyBasket.BLL.Contracts.Authantication;
-public class RegisterRequestValidation:AbstractValidator<RegisterRequestDTO>
+public class RegisterRequestValidation : AbstractValidator<RegisterRequestDTO>
 {
     public RegisterRequestValidation()
     {
-        RuleFor(x=>x.Email)
+        RuleFor(x => x.Email)
             .NotEmpty().WithMessage("Email Should Not be Empty !")
             .EmailAddress().WithMessage("Should be in the Email Format !");
 
@@ -16,7 +16,7 @@ public class RegisterRequestValidation:AbstractValidator<RegisterRequestDTO>
             .NotEmpty().WithMessage("FirstName Cannot be empty !")
             .MaximumLength(100).WithMessage("FirstName Should be Less than 100 !");
 
-        RuleFor(x=>x.lastName)
+        RuleFor(x => x.lastName)
             .NotEmpty().WithMessage("LastName Cannot be Empty !")
             .MaximumLength(100).WithMessage("LastName Should be less than 100 !");
 

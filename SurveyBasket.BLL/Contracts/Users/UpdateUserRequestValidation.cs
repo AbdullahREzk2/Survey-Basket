@@ -1,5 +1,5 @@
 ﻿namespace SurveyBasket.BLL.Contracts.Users;
-public class UpdateUserRequestValidation:AbstractValidator<UpdateUserRequest>
+public class UpdateUserRequestValidation : AbstractValidator<UpdateUserRequest>
 {
     public UpdateUserRequestValidation()
     {
@@ -15,7 +15,7 @@ public class UpdateUserRequestValidation:AbstractValidator<UpdateUserRequest>
             .NotEmpty().WithMessage("FirstName cannot be empty ")
             .EmailAddress().WithMessage("Email must be in the email format ");
 
-        
+
         RuleFor(x => x.Roles)
             .NotEmpty()
             .NotNull();

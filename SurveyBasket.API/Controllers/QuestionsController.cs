@@ -10,12 +10,12 @@ public class QuestionsController : ControllerBase
         _questionservice = questionService;
     }
 
-   #region getAllQuestionsForPoll
+    #region getAllQuestionsForPoll
     [HttpGet("getAllQuestions / {pollId}")]
     [HasPermission(Permissions.GetQuestions)]
-    public async Task<IActionResult> getAllQuestionsForPollAsync(int pollId, [FromQuery] RequestFilters filters,CancellationToken cancellationToken)
+    public async Task<IActionResult> getAllQuestionsForPollAsync(int pollId, [FromQuery] RequestFilters filters, CancellationToken cancellationToken)
     {
-        var questionsResult = await _questionservice.GetAllQuestionsForPollAsync(pollId,filters ,cancellationToken);
+        var questionsResult = await _questionservice.GetAllQuestionsForPollAsync(pollId, filters, cancellationToken);
 
         return questionsResult.IsSuccess
             ? Ok(questionsResult.Value)
@@ -27,7 +27,7 @@ public class QuestionsController : ControllerBase
     [HttpGet("getQuestion /{pollId}/{questionId}")]
     [HasPermission(Permissions.GetQuestions)]
 
-    public async Task<IActionResult> getQuestionByIdAsync(int pollId,int questionId,CancellationToken cancellationToken)
+    public async Task<IActionResult> getQuestionByIdAsync(int pollId, int questionId, CancellationToken cancellationToken)
     {
         var question = await _questionservice.GetQuestionByIdAsync(pollId, questionId, cancellationToken);
 
@@ -41,7 +41,7 @@ public class QuestionsController : ControllerBase
     [HttpPost("addQuestion /{pollId}")]
     [HasPermission(Permissions.AddQuestions)]
 
-    public async Task<IActionResult> addQuestionAsync(int pollId,QuestionRequestDTO question ,CancellationToken cancellationToken)
+    public async Task<IActionResult> addQuestionAsync(int pollId, QuestionRequestDTO question, CancellationToken cancellationToken)
     {
         var addResponse = await _questionservice.AddQuestionAsync(pollId, question, cancellationToken);
 
@@ -55,7 +55,7 @@ public class QuestionsController : ControllerBase
     [HttpPut("UpdateQuestion/{pollId}/questions/{questionId}")]
     [HasPermission(Permissions.UpdateQuestions)]
 
-    public async Task<IActionResult> UpdateQuestionAsync(int pollId,int questionId,[FromBody] QuestionRequestDTO question,CancellationToken cancellationToken)
+    public async Task<IActionResult> UpdateQuestionAsync(int pollId, int questionId, [FromBody] QuestionRequestDTO question, CancellationToken cancellationToken)
     {
         var result = await _questionservice
             .UpdateQuestionAsync(pollId, questionId, question, cancellationToken);
@@ -69,7 +69,7 @@ public class QuestionsController : ControllerBase
     #region Activate Question
     [HttpPut("activateQuestion /{pollId}/{questionId}")]
     [HasPermission(Permissions.UpdateQuestions)]
-    public async Task<IActionResult> activateQuestionAsync(int pollId,int questionId,CancellationToken cancellationToken)
+    public async Task<IActionResult> activateQuestionAsync(int pollId, int questionId, CancellationToken cancellationToken)
     {
         var result = await _questionservice
             .activeToggleQuestion(pollId, questionId, cancellationToken);

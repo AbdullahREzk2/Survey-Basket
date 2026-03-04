@@ -2,7 +2,7 @@
 using MailKit.Security;
 using MimeKit;
 
-public class EmailService(IOptions<MailSettings> mailsettings,ILogger<EmailService> logger) : IEmailSender
+public class EmailService(IOptions<MailSettings> mailsettings, ILogger<EmailService> logger) : IEmailSender
 {
     private readonly MailSettings _mailsettings = mailsettings.Value;
     private readonly ILogger<EmailService> _logger = logger;

@@ -1,5 +1,4 @@
 ﻿using System.Threading.RateLimiting;
-using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.OpenApi.Models;
 using SurveyBasket.API.Health;
 
@@ -7,7 +6,7 @@ namespace SurveyBasket.API.Infrastructure
 {
     public static class DependencyInjection
     {
-        public static IServiceCollection AddApplicationServices(this IServiceCollection services,IConfiguration configuration)
+        public static IServiceCollection AddApplicationServices(this IServiceCollection services, IConfiguration configuration)
         {
             services
                 .AddDatabase(configuration)
@@ -31,7 +30,7 @@ namespace SurveyBasket.API.Infrastructure
         // =========================
         // Database
         // =========================
-        private static IServiceCollection AddDatabase(this IServiceCollection services,IConfiguration configuration)
+        private static IServiceCollection AddDatabase(this IServiceCollection services, IConfiguration configuration)
         {
             var connectionString = configuration.GetConnectionString("DefaultConnection")
                 ?? throw new InvalidOperationException(
@@ -126,7 +125,7 @@ namespace SurveyBasket.API.Infrastructure
         // =========================
         // JWT Authentication
         // =========================
-        private static IServiceCollection AddJwtAuthentication(this IServiceCollection services,IConfiguration configuration)
+        private static IServiceCollection AddJwtAuthentication(this IServiceCollection services, IConfiguration configuration)
         {
             services.Configure<JwtOptions>(
                 configuration.GetSection(JwtOptions.sectionName));
@@ -178,10 +177,12 @@ namespace SurveyBasket.API.Infrastructure
         // =========================
         // Mail Settings
         // =========================
-        private static IServiceCollection AddMailServices(this IServiceCollection services,IConfiguration configuration)
+        private static IServiceCollection AddMailServices(this IServiceCollection services, IConfiguration configuration)
         {
-            services.Configure<MailSettings>(
-                configuration.GetSection(nameof(MailSettings)));
+            services.AddOptions<MailSettings>()
+                .BindConfiguration(nameof(MailSettings))
+                .ValidateDataAnnotations()
+                .ValidateOnStart();
 
             services.AddScoped<IEmailSender, EmailService>();
 
@@ -191,7 +192,7 @@ namespace SurveyBasket.API.Infrastructure
         // =========================
         // Hangfire
         // =========================
-        private static IServiceCollection AddHangfireServices(this IServiceCollection services,IConfiguration configuration)
+        private static IServiceCollection AddHangfireServices(this IServiceCollection services, IConfiguration configuration)
         {
             services.AddHangfire(config => config
                 .SetDataCompatibilityLevel(CompatibilityLevel.Version_180)
@@ -230,7 +231,7 @@ namespace SurveyBasket.API.Infrastructure
             services.AddHealthChecks()
                 .AddDbContextCheck<ApplicationDBContext>(name: "database")
                 .AddHangfire(options => { options.MinimumAvailableServers = 1; })
-                .AddCheck<MailHealthChecks>(name:"Mail Service");
+                .AddCheck<MailHealthChecks>(name: "Mail Service");
 
             return services;
         }

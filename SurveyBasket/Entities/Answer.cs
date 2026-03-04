@@ -1,5 +1,5 @@
 ﻿namespace SurveyBasket.DAL.Entities;
-public sealed class Answer:AuditableEntity
+public sealed class Answer : AuditableEntity
 {
     public int answerId { get; set; }
     public string Content { get; set; } = string.Empty;

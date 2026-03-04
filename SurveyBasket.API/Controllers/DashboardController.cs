@@ -13,7 +13,7 @@ public class DashboardController : ControllerBase
 
     #region Dashboard-statics
     [HttpGet("get-Dashboard-statics/{pollId}")]
-    public async Task<IActionResult> DashboardStatics(int pollId,CancellationToken cancellationToken)
+    public async Task<IActionResult> DashboardStatics(int pollId, CancellationToken cancellationToken)
     {
         var result = await _dashboardservice.GetPollVotesAsync(pollId, cancellationToken);
         return result.IsSuccess

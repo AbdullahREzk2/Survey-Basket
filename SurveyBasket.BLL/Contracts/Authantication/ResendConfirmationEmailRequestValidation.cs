@@ -1,5 +1,5 @@
 ﻿namespace SurveyBasket.BLL.Contracts.Authantication;
-public class ResendConfirmationEmailRequestValidation:AbstractValidator<ResendConfirmationEmailRequest>
+public class ResendConfirmationEmailRequestValidation : AbstractValidator<ResendConfirmationEmailRequest>
 {
     public ResendConfirmationEmailRequestValidation()
     {

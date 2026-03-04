@@ -19,7 +19,7 @@ public class PollsController : ControllerBase
         var pollsResult = await _pollservice.getAllPollsAsync(cancellationToken);
 
         return pollsResult.IsSuccess
-            ? Ok(pollsResult.Value) 
+            ? Ok(pollsResult.Value)
             : pollsResult.ToProblem();
     }
     #endregion
@@ -32,7 +32,7 @@ public class PollsController : ControllerBase
         var pollsResult = await _pollservice.getAvailblePollsAsync(cancellationToken);
 
         return pollsResult.IsSuccess
-            ? Ok(pollsResult.Value) 
+            ? Ok(pollsResult.Value)
             : pollsResult.ToProblem();
     }
     #endregion
@@ -43,9 +43,9 @@ public class PollsController : ControllerBase
     public async Task<IActionResult> GetPollById(int pollId, CancellationToken cancellationToken)
     {
         var pollResult = await _pollservice.getPollByIdAsync(pollId, cancellationToken);
-      
-        return pollResult.IsSuccess 
-            ? Ok(pollResult.Value) 
+
+        return pollResult.IsSuccess
+            ? Ok(pollResult.Value)
             : pollResult.ToProblem();
     }
     #endregion
@@ -57,7 +57,7 @@ public class PollsController : ControllerBase
     {
         var createdPoll = await _pollservice.AddPollAsync(pollRequest, cancellationToken);
 
-        return createdPoll.IsSuccess 
+        return createdPoll.IsSuccess
             ? CreatedAtAction(nameof(GetPollById), new { pollId = createdPoll.Value.PollId }, createdPoll.Value)
             : createdPoll.ToProblem();
     }
@@ -69,9 +69,9 @@ public class PollsController : ControllerBase
     public async Task<IActionResult> UpdatePoll(int pollId, [FromBody] PollRequestDTO pollRequest, CancellationToken cancellationToken)
     {
         var updatedPoll = await _pollservice.UpdatePollAsync(pollId, pollRequest, cancellationToken);
-            
-        return updatedPoll.IsSuccess 
-            ? Ok(updatedPoll.Value) 
+
+        return updatedPoll.IsSuccess
+            ? Ok(updatedPoll.Value)
             : updatedPoll.ToProblem();
     }
     #endregion
@@ -82,9 +82,9 @@ public class PollsController : ControllerBase
     public async Task<IActionResult> DeletePoll(int pollId, CancellationToken cancellationToken)
     {
         var isDeleted = await _pollservice.DeletePollAsync(pollId, cancellationToken);
-       
-        return isDeleted.IsSuccess 
-            ? NoContent() 
+
+        return isDeleted.IsSuccess
+            ? NoContent()
             : isDeleted.ToProblem();
     }
     #endregion
@@ -95,9 +95,9 @@ public class PollsController : ControllerBase
     public async Task<IActionResult> PublishPoll(int pollId, CancellationToken cancellationToken)
     {
         var publishedPoll = await _pollservice.publishToggle(pollId, cancellationToken);
-       
-        return publishedPoll.IsSuccess 
-            ? Ok() 
+
+        return publishedPoll.IsSuccess
+            ? Ok()
             : publishedPoll.ToProblem();
     }
     #endregion

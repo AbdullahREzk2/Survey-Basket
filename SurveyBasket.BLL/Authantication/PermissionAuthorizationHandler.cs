@@ -9,7 +9,7 @@ public class PermissionAuthorizationHandler : AuthorizationHandler<PermissionReq
 
         context.Succeed(requirement);
         return;
-        
+
     }
 
 

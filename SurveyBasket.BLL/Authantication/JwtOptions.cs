@@ -12,7 +12,7 @@ public class JwtOptions
     [Required]
     public string Audience { get; init; } = string.Empty;
 
-    [Range(1, int.MaxValue,ErrorMessage ="Expiry date must be int !")]
+    [Range(1, int.MaxValue, ErrorMessage = "Expiry date must be int !")]
     public int ExpiryMinutes { get; init; }
 
 }

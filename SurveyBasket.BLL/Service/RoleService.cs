@@ -4,9 +4,9 @@ public class RoleService(IRoleRepository roleRepository) : IRoleService
     private readonly IRoleRepository _rolerepository = roleRepository;
 
 
-    public async Task<IEnumerable<RoleResponse>> getAllRoles (bool?includeDisabled = false,CancellationToken cancellationToken = default)
+    public async Task<IEnumerable<RoleResponse>> getAllRoles(bool? includeDisabled = false, CancellationToken cancellationToken = default)
     {
-        var roles = await  _rolerepository.getAllRoles(includeDisabled, cancellationToken);
+        var roles = await _rolerepository.getAllRoles(includeDisabled, cancellationToken);
         return roles.Adapt<IEnumerable<RoleResponse>>();
     }
     public async Task<Result<RoleDetailResponse>> getRoleDetails(string RoleId)
@@ -26,12 +26,12 @@ public class RoleService(IRoleRepository roleRepository) : IRoleService
     {
         var isRoleExist = await _rolerepository.isRoleExist(request.Name);
 
-        if(isRoleExist)
+        if (isRoleExist)
             return Result.Failure<RoleDetailResponse>(RoleErros.RoleAlreadyExist);
 
         var allowedPermissions = Permissions.GetAllPermissions();
 
-        if(request.Permissions.Except(allowedPermissions).Any())
+        if (request.Permissions.Except(allowedPermissions).Any())
             return Result.Failure<RoleDetailResponse>(RoleErros.InvalidPermissions);
 
         var newRole = new ApplicationRole
@@ -40,14 +40,14 @@ public class RoleService(IRoleRepository roleRepository) : IRoleService
             ConcurrencyStamp = Guid.NewGuid().ToString()
         };
 
-       var createResult = await _rolerepository.CreateRole(newRole);
+        var createResult = await _rolerepository.CreateRole(newRole);
 
         if (!createResult.Succeeded)
             return Result.Failure<RoleDetailResponse>(RoleErros.CreationFailed);
 
         var permissionsResult = await _rolerepository.setPermissionsForRole(newRole, request.Permissions);
-        
-        if(!permissionsResult.Succeeded)
+
+        if (!permissionsResult.Succeeded)
             return Result.Failure<RoleDetailResponse>(RoleErros.PermissionAssignmentFailed);
 
         var response = new RoleDetailResponse(newRole.Id, newRole.Name, newRole.isDeleted, request.Permissions);
@@ -56,7 +56,7 @@ public class RoleService(IRoleRepository roleRepository) : IRoleService
     }
     public async Task<Result> UpdateRole(string RoleId, RoleRequest request)
     {
-        var isRoleExist = await _rolerepository.isRoleNameExist(RoleId,request.Name);
+        var isRoleExist = await _rolerepository.isRoleNameExist(RoleId, request.Name);
 
         if (isRoleExist)
             return Result.Failure(RoleErros.RoleAlreadyExist);
@@ -88,14 +88,14 @@ public class RoleService(IRoleRepository roleRepository) : IRoleService
             var currentPermissions =
                 await _rolerepository.getRolePermissions(role);
 
-            var newPermissions = 
+            var newPermissions =
                 request.Permissions.Except(currentPermissions);
 
-            var removedPermissions = 
+            var removedPermissions =
                 currentPermissions.Except(request.Permissions);
 
-           var removedResult = await _rolerepository
-                .removePermissionForRole(RoleId, removedPermissions);
+            var removedResult = await _rolerepository
+                 .removePermissionForRole(RoleId, removedPermissions);
 
             if (!removedResult.Succeeded)
             {
@@ -104,7 +104,7 @@ public class RoleService(IRoleRepository roleRepository) : IRoleService
             }
 
             var addResult = await _rolerepository.setPermissionsForRole(role, newPermissions);
-            if(!addResult.Succeeded)
+            if (!addResult.Succeeded)
             {
                 await transaction.RollbackAsync();
                 return Result.Failure(RoleErros.PermissionAssignmentFailed);

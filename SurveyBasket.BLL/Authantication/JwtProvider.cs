@@ -7,7 +7,7 @@ public class JwtProvider : IJwtProvider
     {
         _options = options.Value;
     }
-    public (string token, int expireIn) GenerateToken(ApplicationUser user,IEnumerable<string> roles, IEnumerable<string> permissions)
+    public (string token, int expireIn) GenerateToken(ApplicationUser user, IEnumerable<string> roles, IEnumerable<string> permissions)
     {
         Claim[] claims = [
             new(JwtRegisteredClaimNames.Sub, user.Id),
@@ -22,7 +22,7 @@ public class JwtProvider : IJwtProvider
         var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_options.key));
 
         var singingCredentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
-        
+
 
         var token = new JwtSecurityToken(
             issuer: _options.Issuer,
@@ -30,9 +30,9 @@ public class JwtProvider : IJwtProvider
             claims: claims,
             expires: DateTime.UtcNow.AddMinutes(_options.ExpiryMinutes),
             signingCredentials: singingCredentials
-            );  
+            );
 
-        return (token:new JwtSecurityTokenHandler().WriteToken(token), expireIn: _options.ExpiryMinutes * 60);
+        return (token: new JwtSecurityTokenHandler().WriteToken(token), expireIn: _options.ExpiryMinutes * 60);
     }
 
     public string? validateToken(string token)

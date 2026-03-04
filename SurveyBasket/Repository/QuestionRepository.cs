@@ -8,7 +8,7 @@ public class QuestionRepository : IQuestionRepository
         _context = context;
     }
 
-    public IQueryable<Question> GetAllQuestionsForPollAsync(int pollId, string searchValue,string sortColumn,string sortDirection)
+    public IQueryable<Question> GetAllQuestionsForPollAsync(int pollId, string searchValue, string sortColumn, string sortDirection)
     {
         var query = _context.Questions
             .Where(q => q.PollId == pollId);
@@ -35,26 +35,26 @@ public class QuestionRepository : IQuestionRepository
             .AsNoTracking()
             .ToListAsync(cancellationToken);
     }
-    public async Task<Question?> GetQuestionByIdAsync(int pollId,int questionId,CancellationToken cancellationToken)
+    public async Task<Question?> GetQuestionByIdAsync(int pollId, int questionId, CancellationToken cancellationToken)
     {
         return await _context.Questions
-            .Where(q=> q.PollId == pollId && q.questionId == questionId)
-            .Include(q=>q.answers.Where(a=>a.isActive))
+            .Where(q => q.PollId == pollId && q.questionId == questionId)
+            .Include(q => q.answers.Where(a => a.isActive))
             .AsNoTracking()
             .FirstOrDefaultAsync(cancellationToken);
     }
-    public async Task<Question?> AddQuestionAsync(Question question,CancellationToken cancellationToken)
+    public async Task<Question?> AddQuestionAsync(Question question, CancellationToken cancellationToken)
     {
         _context.Questions.Add(question);
 
         await _context.SaveChangesAsync(cancellationToken);
 
         return await _context.Questions
-            .Include(q=>q.answers)
-            .FirstOrDefaultAsync(q=>q.questionId==question.questionId,cancellationToken);
+            .Include(q => q.answers)
+            .FirstOrDefaultAsync(q => q.questionId == question.questionId, cancellationToken);
 
     }
-    public async Task<bool> UpdateQuestionAsync(Question question,CancellationToken cancellationToken)
+    public async Task<bool> UpdateQuestionAsync(Question question, CancellationToken cancellationToken)
     {
         await _context.SaveChangesAsync(cancellationToken);
         return true;
@@ -67,10 +67,10 @@ public class QuestionRepository : IQuestionRepository
     public async Task<bool> activeToggleQuestion(int pollId, int QuestionId, CancellationToken cancellationToken)
     {
         var question = await _context.Questions
-            .Where(q=> q.PollId == pollId && q.questionId == QuestionId)
+            .Where(q => q.PollId == pollId && q.questionId == QuestionId)
             .FirstOrDefaultAsync(cancellationToken);
 
-         if (question == null)
+        if (question == null)
             return false;
 
         question.isActive = !question.isActive;

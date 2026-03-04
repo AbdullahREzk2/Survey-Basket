@@ -1,11 +1,11 @@
 ﻿namespace SurveyBasket.BLL.Errors;
-public static class PollErrors
+public record PollErrors
 {
-    public static Error PollNotFound = 
+    public static Error PollNotFound =
         new("Poll.NotFound", "The poll was not found.", StatusCodes.Status404NotFound);
 
-    public static Error PollAlreadyExists = 
-        new("Poll.AlreadyExists", "A poll with the same title already exists.",StatusCodes.Status409Conflict);
+    public static Error PollAlreadyExists =
+        new("Poll.AlreadyExists", "A poll with the same title already exists.", StatusCodes.Status409Conflict);
 
     public static Error PollCreationFailed =
         new("Poll.CreationFailed", "Failed to create the poll.", StatusCodes.Status400BadRequest);

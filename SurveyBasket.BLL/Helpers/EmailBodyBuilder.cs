@@ -2,7 +2,7 @@
 
 public static class EmailBodyBuilder
 {
-    public static string GenerateEmailBody(string templete,Dictionary<string,string> templeteModel)
+    public static string GenerateEmailBody(string templete, Dictionary<string, string> templeteModel)
     {
         var templetePath = $"{Directory.GetCurrentDirectory()}/Templete/{templete}.html";
 
@@ -11,7 +11,7 @@ public static class EmailBodyBuilder
         streamReader.Close();
 
         foreach (var item in templeteModel)
-           body = body.Replace(item.Key, item.Value);
+            body = body.Replace(item.Key, item.Value);
 
         return body;
     }

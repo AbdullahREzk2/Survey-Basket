@@ -11,8 +11,8 @@ public class CurrentUserService : ICurrentUserService
 
     public string? UserId =>
          _httpcontextaccessor.HttpContext?.User.GetUserId();
-            
-    
+
+
 
 
 }

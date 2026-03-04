@@ -4,12 +4,12 @@ public class UserConfiguration : IEntityTypeConfiguration<ApplicationUser>
     public void Configure(EntityTypeBuilder<ApplicationUser> builder)
     {
         builder
-            .OwnsMany(u=>u.refreshTokens)
+            .OwnsMany(u => u.refreshTokens)
             .ToTable("RefreshTokens")
             .WithOwner()
             .HasForeignKey("UserId");
 
-        builder.Property(u=> u.firstName)
+        builder.Property(u => u.firstName)
             .HasMaxLength(50)
             .IsRequired();
         builder.Property(u => u.lastName)
@@ -21,17 +21,17 @@ public class UserConfiguration : IEntityTypeConfiguration<ApplicationUser>
         builder.HasData(new ApplicationUser
         {
 
-            Id= defaultUser.AdminId,
-            firstName= "Admin",
-            lastName= "Admin",
-            UserName= defaultUser.AdminEmail,
-            NormalizedUserName= defaultUser.AdminEmail.ToUpper(),
-            Email= defaultUser.AdminEmail,
-            NormalizedEmail= defaultUser.AdminEmail.ToUpper(),
-            SecurityStamp= defaultUser.AdminSecurityStamp,
-            ConcurrencyStamp= defaultUser.AdminConcurrencyStamp,
-            EmailConfirmed= true,
-            PasswordHash = defaultUser.AdminPasswordHash
+            Id = defaultUser.Admin.Id,
+            firstName = "Admin",
+            lastName = "Admin",
+            UserName = defaultUser.Admin.Email,
+            NormalizedUserName = defaultUser.Admin.Email.ToUpper(),
+            Email = defaultUser.Admin.Email,
+            NormalizedEmail = defaultUser.Admin.Email.ToUpper(),
+            SecurityStamp = defaultUser.Admin.SecurityStamp,
+            ConcurrencyStamp = defaultUser.Admin.ConcurrencyStamp,
+            EmailConfirmed = true,
+            PasswordHash = defaultUser.Admin.PasswordHash
         });
 
     }

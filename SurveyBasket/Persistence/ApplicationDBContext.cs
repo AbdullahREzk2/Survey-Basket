@@ -1,6 +1,6 @@
 ﻿namespace SurveyBasket.DAL.Persistence;
 public class ApplicationDBContext(DbContextOptions<ApplicationDBContext> options, ICurrentUserService currentUserService) :
-    IdentityDbContext<ApplicationUser,ApplicationRole,string>(options)
+    IdentityDbContext<ApplicationUser, ApplicationRole, string>(options)
 {
     private readonly ICurrentUserService? _currentUserService = currentUserService;
 

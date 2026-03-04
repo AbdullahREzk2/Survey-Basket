@@ -1,6 +1,6 @@
 ﻿namespace SurveyBasket.BLL.Authantication;
 public class PermissionAuthorizationPolicyProvider(IOptions<AuthorizationOptions> options)
-    :DefaultAuthorizationPolicyProvider(options)
+    : DefaultAuthorizationPolicyProvider(options)
 {
     private readonly AuthorizationOptions _authorizationoptions = options.Value;
     public override async Task<AuthorizationPolicy?> GetPolicyAsync(string policyName)

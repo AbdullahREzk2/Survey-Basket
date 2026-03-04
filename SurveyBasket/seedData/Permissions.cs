@@ -23,7 +23,7 @@ public static class Permissions
     public const string Results = "results:read";
 
 
-    public static IList<string?> GetAllPermissions()=>
-       typeof(Permissions).GetFields().Select(x=>x.GetValue(x) as string).ToList();
+    public static IList<string?> GetAllPermissions() =>
+       typeof(Permissions).GetFields().Select(x => x.GetValue(x) as string).ToList();
 
 }

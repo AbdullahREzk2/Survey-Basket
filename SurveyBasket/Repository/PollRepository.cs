@@ -17,10 +17,10 @@ public class PollRepository : IPollRepository
     public async Task<IEnumerable<Poll>> getAvailblePollsAsync(CancellationToken cancellationToken)
     {
         return await _dbcontext.Polls
-            .Where (
-            p=>p.isPublished 
-            && p.startDate <= DateOnly.FromDateTime(DateTime.UtcNow) 
-            && p.endDate >=DateOnly.FromDateTime (DateTime.UtcNow)
+            .Where(
+            p => p.isPublished
+            && p.startDate <= DateOnly.FromDateTime(DateTime.UtcNow)
+            && p.endDate >= DateOnly.FromDateTime(DateTime.UtcNow)
             )
             .AsNoTracking()
             .ToListAsync(cancellationToken);
@@ -29,29 +29,29 @@ public class PollRepository : IPollRepository
     {
         return await _dbcontext.Polls
             .Where(
-            p => p.PollId == pollId 
-            && p.isPublished 
-            && p.startDate <= DateOnly.FromDateTime(DateTime.UtcNow) 
+            p => p.PollId == pollId
+            && p.isPublished
+            && p.startDate <= DateOnly.FromDateTime(DateTime.UtcNow)
             && p.endDate >= DateOnly.FromDateTime(DateTime.UtcNow)
             )
             .AsNoTracking()
             .FirstOrDefaultAsync(cancellationToken);
     }
-    public async Task<Poll> getPollByIdAsync(int pollId,CancellationToken cancellationToken)
+    public async Task<Poll> getPollByIdAsync(int pollId, CancellationToken cancellationToken)
     {
         var poll = await _dbcontext.Polls
             .AsNoTracking()
-            .FirstOrDefaultAsync(p => p.PollId == pollId,cancellationToken);
+            .FirstOrDefaultAsync(p => p.PollId == pollId, cancellationToken);
 
         return poll!;
     }
-    public async Task<Poll> AddPollAsync(Poll poll,CancellationToken cancellationToken)
+    public async Task<Poll> AddPollAsync(Poll poll, CancellationToken cancellationToken)
     {
-        await _dbcontext.Polls.AddAsync(poll,cancellationToken);
+        await _dbcontext.Polls.AddAsync(poll, cancellationToken);
         await _dbcontext.SaveChangesAsync(cancellationToken);
         return poll;
     }
-    public async Task<Poll?> UpdatePollAsync(int pollId, Poll poll,CancellationToken cancellationToken)
+    public async Task<Poll?> UpdatePollAsync(int pollId, Poll poll, CancellationToken cancellationToken)
     {
         var exsistingPoll = await _dbcontext.Polls
             .FirstOrDefaultAsync(p => p.PollId == pollId, cancellationToken);
@@ -64,24 +64,24 @@ public class PollRepository : IPollRepository
         exsistingPoll.isPublished = poll.isPublished;
         exsistingPoll.startDate = poll.startDate;
         exsistingPoll.endDate = poll.endDate;
-        
+
 
         await _dbcontext.SaveChangesAsync(cancellationToken);
         return exsistingPoll;
 
     }
-    public async Task<bool> DeletePollAsync(int pollId,CancellationToken cancellationToken)
+    public async Task<bool> DeletePollAsync(int pollId, CancellationToken cancellationToken)
     {
-        var poll= await _dbcontext.Polls.FirstOrDefaultAsync(p => p.PollId == pollId, cancellationToken);
+        var poll = await _dbcontext.Polls.FirstOrDefaultAsync(p => p.PollId == pollId, cancellationToken);
 
         if (poll == null)
             return false;
 
         _dbcontext.Polls.Remove(poll);
-         await _dbcontext.SaveChangesAsync(cancellationToken);
+        await _dbcontext.SaveChangesAsync(cancellationToken);
         return true;
     }
-    public async Task<bool> SearchPollByTitleAsync(string title,CancellationToken cancellationToken)
+    public async Task<bool> SearchPollByTitleAsync(string title, CancellationToken cancellationToken)
     {
         return await _dbcontext.Polls
             .AsNoTracking()
@@ -103,7 +103,7 @@ public class PollRepository : IPollRepository
     public async Task<IEnumerable<Poll>> getTodayPolls(CancellationToken cancellationToken)
     {
         var polls = await _dbcontext.Polls
-            .Where(x=>x.isPublished && x.startDate == DateOnly.FromDateTime(DateTime.UtcNow))
+            .Where(x => x.isPublished && x.startDate == DateOnly.FromDateTime(DateTime.UtcNow))
             .AsNoTracking()
             .ToListAsync(cancellationToken);
 

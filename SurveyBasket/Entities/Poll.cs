@@ -1,5 +1,5 @@
 ﻿namespace SurveyBasket.DAL.Entities;
-public class Poll:AuditableEntity
+public class Poll : AuditableEntity
 {
     public int PollId { get; set; }
     public string Title { get; set; } = string.Empty;

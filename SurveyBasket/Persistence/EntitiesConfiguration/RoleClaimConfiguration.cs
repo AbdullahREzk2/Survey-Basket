@@ -6,14 +6,14 @@ public class RoleClaimConfiguration : IEntityTypeConfiguration<IdentityRoleClaim
         var permissions = Permissions.GetAllPermissions();
         var adminClaims = new List<IdentityRoleClaim<string>>();
 
-        for(var i = 0; i < permissions.Count; i++)
+        for (var i = 0; i < permissions.Count; i++)
         {
             adminClaims.Add(new IdentityRoleClaim<string>
             {
                 Id = i + 1,
                 ClaimType = Permissions.Type,
                 ClaimValue = permissions[i],
-                RoleId = defaultRoles.AdminRoleId
+                RoleId = defaultRoles.Admin.RoleId
             });
         }
 
@@ -25,14 +25,14 @@ public class RoleClaimConfiguration : IEntityTypeConfiguration<IdentityRoleClaim
                 Id = 100,
                 ClaimType = Permissions.Type,
                 ClaimValue = Permissions.GetPolls,
-                RoleId = defaultRoles.MemberRoleId
+                RoleId = defaultRoles.Member.RoleId
             },
             new IdentityRoleClaim<string>
             {
                 Id = 101,
                 ClaimType = Permissions.Type,
                 ClaimValue = Permissions.GetQuestions,
-                RoleId = defaultRoles.MemberRoleId
+                RoleId = defaultRoles.Member.RoleId
             }
         };
 

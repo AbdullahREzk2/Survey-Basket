@@ -11,7 +11,7 @@ namespace SurveyBasket.API.Infrastructure
 
             builder.Services.AddApplicationServices(builder.Configuration);
 
-            builder.Host.UseSerilog((context,configuration)=>
+            builder.Host.UseSerilog((context, configuration) =>
             configuration.ReadFrom.Configuration(context.Configuration)
             );
 
@@ -35,7 +35,7 @@ namespace SurveyBasket.API.Infrastructure
 
             app.UseHttpsRedirection();
 
-            app.UseHangfireDashboard("/jobs",new DashboardOptions
+            app.UseHangfireDashboard("/jobs", new DashboardOptions
             {
                 Authorization =
                 [
@@ -45,7 +45,7 @@ namespace SurveyBasket.API.Infrastructure
                         Pass = app.Configuration.GetValue<string>("HangfireSettings:Password")
                     }
                 ],
-                DashboardTitle= "Survey Basket Jobs Dashboard",
+                DashboardTitle = "Survey Basket Jobs Dashboard",
                 //IsReadOnlyFunc = (DashboardContext context) => true
 
             });
@@ -53,7 +53,7 @@ namespace SurveyBasket.API.Infrastructure
             var scopeFactory = app.Services.GetRequiredService<IServiceScopeFactory>();
             using var scope = scopeFactory.CreateScope();
             var notificationService = scope.ServiceProvider.GetRequiredService<INotificationService>();
-            RecurringJob.AddOrUpdate("sendNewNotificationPollAsync", () => notificationService.sendNewNotificationPollAsync(null,CancellationToken.None), Cron.Daily);
+            RecurringJob.AddOrUpdate("sendNewNotificationPollAsync", () => notificationService.sendNewNotificationPollAsync(null, CancellationToken.None), Cron.Daily);
 
             app.UseRateLimiter();
 
@@ -65,7 +65,7 @@ namespace SurveyBasket.API.Infrastructure
 
             app.UseExceptionHandler();
 
-            app.MapHealthChecks("health",new HealthCheckOptions
+            app.MapHealthChecks("health", new HealthCheckOptions
             {
                 ResponseWriter = UIResponseWriter.WriteHealthCheckUIResponse
             });

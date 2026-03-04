@@ -1,5 +1,5 @@
 ﻿namespace SurveyBasket.BLL.Contracts.Authantication;
-public class ConfirmEmailRequestValidation:AbstractValidator<ConfirmEmailRequestDTO>
+public class ConfirmEmailRequestValidation : AbstractValidator<ConfirmEmailRequestDTO>
 {
     public ConfirmEmailRequestValidation()
     {

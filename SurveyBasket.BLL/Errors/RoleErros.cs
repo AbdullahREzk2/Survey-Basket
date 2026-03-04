@@ -1,5 +1,5 @@
 ﻿namespace SurveyBasket.BLL.Errors;
-public static class RoleErros
+public record RoleErros
 {
     public static Error RoleNotFound =
         new("Role.NotFound", "There's No Role with this Id", StatusCodes.Status404NotFound);

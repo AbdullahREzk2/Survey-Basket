@@ -14,7 +14,7 @@ public class DashboardRepository : IDashboardRepository
             .Select(p => p.Title)
             .FirstOrDefaultAsync(cancellationToken);
     }
-    public async Task<IEnumerable<VoterDetails>>GetVoterDetailsAsync(int pollId, CancellationToken cancellationToken = default)
+    public async Task<IEnumerable<VoterDetails>> GetVoterDetailsAsync(int pollId, CancellationToken cancellationToken = default)
     {
         return await _context.Votes
             .Where(v => v.PollId == pollId)
@@ -26,7 +26,7 @@ public class DashboardRepository : IDashboardRepository
             })
             .ToListAsync(cancellationToken);
     }
-    public async Task<IEnumerable<QuestionAnswerDTO>>GetQuestionAnswersAsync(int pollId, CancellationToken cancellationToken = default)
+    public async Task<IEnumerable<QuestionAnswerDTO>> GetQuestionAnswersAsync(int pollId, CancellationToken cancellationToken = default)
     {
         return await _context.voteAnswers
             .Where(va => va.Vote.PollId == pollId)
@@ -38,7 +38,7 @@ public class DashboardRepository : IDashboardRepository
             })
             .ToListAsync(cancellationToken);
     }
-    public async Task<IEnumerable<VotesPerDayDTO>>GetVotesPerDayAsync(int pollId, CancellationToken cancellationToken = default)
+    public async Task<IEnumerable<VotesPerDayDTO>> GetVotesPerDayAsync(int pollId, CancellationToken cancellationToken = default)
     {
         return await _context.Votes
             .Where(v => v.PollId == pollId)
@@ -52,14 +52,14 @@ public class DashboardRepository : IDashboardRepository
     public async Task<IEnumerable<QuestionVoteDTO>> getVotesPerQuestionAsync(int pollId, CancellationToken cancellationToken = default)
     {
         return await _context.voteAnswers
-            .Where(v=>v.Vote.PollId == pollId)
+            .Where(v => v.Vote.PollId == pollId)
             .GroupBy(v => new
             {
                 v.QuestionId,
                 v.question.Content
             })
-            .Select(g=> new QuestionVoteDTO(
-            
+            .Select(g => new QuestionVoteDTO(
+
                  g.Key.Content,
                  g.Count()
             ))

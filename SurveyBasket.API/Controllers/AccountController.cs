@@ -12,7 +12,7 @@ public class AccountController(IUserService userService) : ControllerBase
     {
         var result = await _userservice.GetProfileAsync(User.GetUserId()!);
 
-        return result.IsSuccess? Ok(result.Value): result.ToProblem();   
+        return result.IsSuccess ? Ok(result.Value) : result.ToProblem();
     }
     #endregion
 
@@ -31,7 +31,7 @@ public class AccountController(IUserService userService) : ControllerBase
     public async Task<IActionResult> ChangePassword([FromBody] ChangePasswordRequest request)
     {
         var result = await _userservice.ChangePasswordAsync(User.GetUserId()!, request);
-        return result.IsSuccess? NoContent(): result.ToProblem();
+        return result.IsSuccess ? NoContent() : result.ToProblem();
     }
     #endregion
 

@@ -1,20 +1,20 @@
 ﻿namespace SurveyBasket.DAL.Repository;
-public class RoleRepository(RoleManager<ApplicationRole> roleManager,ApplicationDBContext context) : IRoleRepository
+public class RoleRepository(RoleManager<ApplicationRole> roleManager, ApplicationDBContext context) : IRoleRepository
 {
     private readonly RoleManager<ApplicationRole> _rolemanager = roleManager;
     private readonly ApplicationDBContext _context = context;
 
     public async Task<IEnumerable<ApplicationRole>> getAllRoles(bool? includeDisabled = false, CancellationToken cancellationToken = default)
     {
-       return await _rolemanager.Roles
-                   .Where(x => !x.isDeafult && (!x.isDeleted || (includeDisabled.HasValue && includeDisabled.Value)))
-                   .ToListAsync(cancellationToken);
+        return await _rolemanager.Roles
+                    .Where(x => !x.isDeafult && (!x.isDeleted || (includeDisabled.HasValue && includeDisabled.Value)))
+                    .ToListAsync(cancellationToken);
     }
     public async Task<ApplicationRole?> getRoleById(string RoleId)
     {
         return await _rolemanager.FindByIdAsync(RoleId);
     }
-    public async Task<IEnumerable<string>> getRolePermissions (ApplicationRole role)
+    public async Task<IEnumerable<string>> getRolePermissions(ApplicationRole role)
     {
         //var permissions = await _rolemanager.GetClaimsAsync(role);
         //return permissions.Select(x => x.Value);
@@ -65,7 +65,7 @@ public class RoleRepository(RoleManager<ApplicationRole> roleManager,Application
     {
         var role = await _rolemanager.FindByIdAsync(roleId);
 
-        role!.isDeleted =!role.isDeleted;
+        role!.isDeleted = !role.isDeleted;
 
         await _rolemanager.UpdateAsync(role);
 
