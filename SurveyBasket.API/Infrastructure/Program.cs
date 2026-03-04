@@ -1,6 +1,7 @@
 using HangfireBasicAuthenticationFilter;
 using HealthChecks.UI.Client;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
+
 namespace SurveyBasket.API.Infrastructure
 {
     public class Program
@@ -12,27 +13,20 @@ namespace SurveyBasket.API.Infrastructure
             builder.Services.AddApplicationServices(builder.Configuration);
 
             builder.Host.UseSerilog((context, configuration) =>
-            configuration.ReadFrom.Configuration(context.Configuration)
+                configuration.ReadFrom.Configuration(context.Configuration)
             );
 
-
-            builder.Services.AddControllers()
-            .AddFluentValidation(options =>
-            {
-                options.RegisterValidatorsFromAssemblyContaining<PollRequestValidation>();
-            });
-
+            builder.Services.AddControllers();
 
             var app = builder.Build();
 
             if (app.Environment.IsDevelopment())
             {
                 app.MapOpenApi();
-                //app.UseSwaggerUI(options=>options.SwaggerEndpoint("/openapi/v1.json","v1"));
                 app.MapScalarApiReference();
             }
-            app.UseSerilogRequestLogging();
 
+            app.UseSerilogRequestLogging();
             app.UseHttpsRedirection();
 
             app.UseHangfireDashboard("/jobs", new DashboardOptions
@@ -46,23 +40,21 @@ namespace SurveyBasket.API.Infrastructure
                     }
                 ],
                 DashboardTitle = "Survey Basket Jobs Dashboard",
-                //IsReadOnlyFunc = (DashboardContext context) => true
-
             });
 
             var scopeFactory = app.Services.GetRequiredService<IServiceScopeFactory>();
             using var scope = scopeFactory.CreateScope();
             var notificationService = scope.ServiceProvider.GetRequiredService<INotificationService>();
-            RecurringJob.AddOrUpdate("sendNewNotificationPollAsync", () => notificationService.sendNewNotificationPollAsync(null, CancellationToken.None), Cron.Daily);
+            RecurringJob.AddOrUpdate(
+                "sendNewNotificationPollAsync",
+                () => notificationService.sendNewNotificationPollAsync(null, CancellationToken.None),
+                Cron.Daily
+            );
 
             app.UseRateLimiter();
-
             app.UseAuthentication();
-
             app.UseAuthorization();
-
             app.MapControllers();
-
             app.UseExceptionHandler();
 
             app.MapHealthChecks("health", new HealthCheckOptions
@@ -71,8 +63,6 @@ namespace SurveyBasket.API.Infrastructure
             });
 
             app.Run();
-
-
         }
     }
 }
