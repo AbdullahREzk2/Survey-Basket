@@ -1,5 +1,5 @@
 ﻿using System.Threading.RateLimiting;
-using Microsoft.OpenApi.Models;
+using Microsoft.OpenApi;
 using SurveyBasket.API.Health;
 
 namespace SurveyBasket.API.Infrastructure
@@ -23,7 +23,6 @@ namespace SurveyBasket.API.Infrastructure
                 .AddRateLimiting()
                 .AddOpenApiWithJwt();
 
-
             return services;
         }
 
@@ -37,7 +36,7 @@ namespace SurveyBasket.API.Infrastructure
                     "Connection string 'DefaultConnection' not found.");
 
             services.AddDbContext<ApplicationDBContext>(options =>
-                options.UseNpgsql(connectionString));
+                options.UseSqlServer(connectionString));
 
             return services;
         }
@@ -118,6 +117,8 @@ namespace SurveyBasket.API.Infrastructure
         // =========================
         private static IServiceCollection AddFluentValidation(this IServiceCollection services)
         {
+            services.AddFluentValidationAutoValidation();
+            services.AddFluentValidationClientsideAdapters();
             services.AddValidatorsFromAssembly(typeof(PollRequestValidation).Assembly);
             return services;
         }
@@ -198,12 +199,7 @@ namespace SurveyBasket.API.Infrastructure
                 .SetDataCompatibilityLevel(CompatibilityLevel.Version_180)
                 .UseSimpleAssemblyNameTypeSerializer()
                 .UseRecommendedSerializerSettings()
-                .UsePostgreSqlStorage(options =>
-                {
-                    options.UseNpgsqlConnection(
-                        configuration.GetConnectionString("HangfireConnection")
-                    );
-                })
+                .UseSqlServerStorage(configuration.GetConnectionString("HangfireConnection"))
             );
 
             services.AddHangfireServer();
@@ -227,7 +223,6 @@ namespace SurveyBasket.API.Infrastructure
         // =========================
         private static IServiceCollection AddhealthChecks(this IServiceCollection services)
         {
-
             services.AddHealthChecks()
                 .AddDbContextCheck<ApplicationDBContext>(name: "database")
                 .AddHangfire(options => { options.MinimumAvailableServers = 1; })
@@ -268,37 +263,26 @@ namespace SurveyBasket.API.Infrastructure
             {
                 options.AddDocumentTransformer((document, context, cancellationToken) =>
                 {
-                    document.Components ??= new();
-                    document.Components.SecuritySchemes ??= new Dictionary<string, OpenApiSecurityScheme>();
+                    document.Components ??= new OpenApiComponents();
+                    document.Components.SecuritySchemes ??= new Dictionary<string, IOpenApiSecurityScheme>();
 
-                    document.Components.SecuritySchemes["Bearer"] =
-                        new OpenApiSecurityScheme
-                        {
-                            Type = SecuritySchemeType.Http,
-                            Scheme = "bearer",
-                            BearerFormat = "JWT",
-                            In = ParameterLocation.Header,
-                            Name = "Authorization",
-                            Description = "Enter your JWT token"
-                        };
-
-                    document.SecurityRequirements ??= new List<OpenApiSecurityRequirement>();
-
-                    document.SecurityRequirements.Add(
-                        new OpenApiSecurityRequirement
-                        {
+                    document.Components.SecuritySchemes["Bearer"] = new OpenApiSecurityScheme
                     {
-                        new OpenApiSecurityScheme
-                        {
-                            Reference = new OpenApiReference
-                            {
-                                Type = ReferenceType.SecurityScheme,
-                                Id = "Bearer"
-                            }
-                        },
-                        Array.Empty<string>()
-                    }
-                        });
+                        Type = SecuritySchemeType.Http,
+                        Scheme = "bearer",
+                        BearerFormat = "JWT",
+                        In = ParameterLocation.Header,
+                        Name = "Authorization",
+                        Description = "Enter your JWT token"
+                    };
+
+                    var securityRequirement = new OpenApiSecurityRequirement();
+                    securityRequirement.Add(
+                        new OpenApiSecuritySchemeReference("Bearer", document),
+                        new List<string>()
+                    );
+
+                    document.Security = new List<OpenApiSecurityRequirement> { securityRequirement };
 
                     return Task.CompletedTask;
                 });
@@ -306,6 +290,5 @@ namespace SurveyBasket.API.Infrastructure
 
             return services;
         }
-
     }
 }
