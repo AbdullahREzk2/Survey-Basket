@@ -10,4 +10,5 @@ public interface IUserService
     Task<Result> updateUserAsync(string userId, UpdateUserRequest request, CancellationToken cancellationToken = default);
     Task<Result> toggleStatusAsync(string userId);
     Task<Result> unlockUserAsync(string userId);
+    Task<Result<string>> UploadProfileImageAsync(string userId, IFormFile image, CancellationToken cancellationToken = default);
 }

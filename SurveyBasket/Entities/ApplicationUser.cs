@@ -5,4 +5,5 @@ public class ApplicationUser : IdentityUser
     public string lastName { get; set; } = string.Empty;
     public bool isDisabled { get; set; }
     public List<RefreshToken> refreshTokens { get; set; } = [];
+    public string ImageURL { get; set; } = string.Empty;
 }

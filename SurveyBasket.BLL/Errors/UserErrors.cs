@@ -33,4 +33,7 @@ public record UserErrors
 
     public static Error InvalidRoles =
         new("User.InvalidRoles", "Invalid Roles", StatusCodes.Status400BadRequest);
+
+    public static readonly Error ImageUploadFailed = 
+        new("User.ImageUploadFailed", "Failed to upload image", StatusCodes.Status400BadRequest);
 }

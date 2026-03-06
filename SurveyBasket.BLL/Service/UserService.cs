@@ -1,9 +1,10 @@
 ﻿namespace SurveyBasket.BLL.Service;
 
-public class UserService(IUserRepository userRepository, IRoleService roleService) : IUserService
+public class UserService(IUserRepository userRepository, IRoleService roleService,IImageService imageService) : IUserService
 {
     private readonly IUserRepository _userrepository = userRepository;
     private readonly IRoleService _roleservice = roleService;
+    private readonly IImageService _imageservice = imageService;
 
     public async Task<Result<UserProfileResponse>> GetProfileAsync(string userId)
     {
@@ -145,4 +146,39 @@ public class UserService(IUserRepository userRepository, IRoleService roleServic
         var error = result.Errors.First();
         return Result.Failure(new Error(error.Code, error.Description, StatusCodes.Status400BadRequest));
     }
+
+    public async Task<Result<string>> UploadProfileImageAsync(string userId, IFormFile image, CancellationToken cancellationToken = default)
+    {
+        var user = await _userrepository.FindByIdAsync(userId);
+        if (user is null)
+            return Result.Failure<string>(UserErrors.UserNotFound);
+
+        if (!string.IsNullOrEmpty(user.ImageURL))
+        {
+            var publicId = GetPublicIdFromUrl(user.ImageURL);
+            await _imageservice.DeleteAsync(publicId, cancellationToken);
+        }
+
+        var imageUrl = await _imageservice.UploadAsync(image, cancellationToken);
+        if (imageUrl is null)
+            return Result.Failure<string>(UserErrors.ImageUploadFailed);
+
+        user.ImageURL = imageUrl;
+        await _userrepository.UpdateAsync(user);
+
+        return Result.Success(imageUrl);
+    }
+
+    private static string GetPublicIdFromUrl(string url)
+    {
+        var uri = new Uri(url);
+        var segments = uri.AbsolutePath.Split('/');
+        var uploadIndex = Array.IndexOf(segments, "upload");
+        var publicIdSegments = segments.Skip(uploadIndex + 2);
+        var publicId = string.Join("/", publicIdSegments);
+        return Path.GetFileNameWithoutExtension(publicId) is var name
+            ? publicId.Replace(Path.GetFileName(publicId), name)
+            : publicId;
+    }
+
 }

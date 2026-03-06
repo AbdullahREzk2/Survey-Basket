@@ -1,6 +1,7 @@
 ﻿using System.Threading.RateLimiting;
 using Microsoft.OpenApi;
 using SurveyBasket.API.Health;
+using SurveyBasket.BLL.Setting;
 
 namespace SurveyBasket.API.Infrastructure
 {
@@ -21,7 +22,8 @@ namespace SurveyBasket.API.Infrastructure
                 .AddHangfireServices(configuration)
                 .AddhealthChecks()
                 .AddRateLimiting()
-                .AddOpenApiWithJwt();
+                .AddOpenApiWithJwt()
+                .AddCloudinaryServices(configuration);
 
             return services;
         }
@@ -290,5 +292,21 @@ namespace SurveyBasket.API.Infrastructure
 
             return services;
         }
+
+        // =========================
+        // Cloudinary
+        // =========================
+        private static IServiceCollection AddCloudinaryServices(this IServiceCollection services, IConfiguration configuration)
+        {
+            services.AddOptions<CloudinarySettings>()
+                .BindConfiguration(CloudinarySettings.SectionName)
+                .ValidateDataAnnotations()
+                .ValidateOnStart();
+
+            services.AddScoped<IImageService, ImageService>();
+
+            return services;
+        }
+
     }
 }

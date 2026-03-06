@@ -35,5 +35,13 @@ public class AccountController(IUserService userService) : ControllerBase
     }
     #endregion
 
+    #region add Profile Image
+    [HttpPost("profile-image")]
+    public async Task<IActionResult> UploadProfileImage(IFormFile image, CancellationToken cancellationToken)
+    {
+        var result = await _userservice.UploadProfileImageAsync(User.GetUserId()!, image, cancellationToken);
+        return result.IsSuccess ? NoContent() : result.ToProblem();
+    }
+    #endregion
 
 }

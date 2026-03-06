@@ -17,14 +17,14 @@ namespace SurveyBasket.API.Infrastructure
 
 
             builder.Services.AddControllers();
-            
+
             var app = builder.Build();
 
-            
-                app.MapOpenApi();
-                //app.UseSwaggerUI(options=>options.SwaggerEndpoint("/openapi/v1.json","v1"));
-                app.MapScalarApiReference();
-            
+
+            app.MapOpenApi();
+            //app.UseSwaggerUI(options=>options.SwaggerEndpoint("/openapi/v1.json","v1"));
+            app.MapScalarApiReference();
+
             app.UseSerilogRequestLogging();
 
             app.UseHttpsRedirection();
