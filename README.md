@@ -199,6 +199,9 @@ GET    /api/dashboard/polls/{pollId}/votes-per-question
 ### 👤 Account
 ```
 POST   /api/account/profile-image
+GET   /api/account/userInfo
+PUT   /api/account/update-User-Info
+PUT   /api/account/change-password
 ```
 
 ### 👥 Users (Admin)
