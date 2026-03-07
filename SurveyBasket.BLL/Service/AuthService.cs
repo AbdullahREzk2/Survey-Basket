@@ -9,7 +9,7 @@ public class AuthService : IAuthService
     private readonly IEmailSender _emailsender;
     private readonly IBackgroundJobClient _backgroundjob;
     private readonly IHttpContextAccessor _httpcontextaccessor;
-    private readonly AppURLSetting _appURL; 
+    private readonly AppURLSetting _appURL;
     private readonly int _refreshTokenValidityInDays = 14;
 
     public AuthService(

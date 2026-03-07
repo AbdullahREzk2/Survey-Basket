@@ -1,6 +1,6 @@
 ﻿namespace SurveyBasket.BLL.Service;
 
-public class UserService(IUserRepository userRepository, IRoleService roleService,IImageService imageService) : IUserService
+public class UserService(IUserRepository userRepository, IRoleService roleService, IImageService imageService) : IUserService
 {
     private readonly IUserRepository _userrepository = userRepository;
     private readonly IRoleService _roleservice = roleService;
