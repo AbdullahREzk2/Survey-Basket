@@ -22,6 +22,7 @@ namespace SurveyBasket.API.Infrastructure
                 .AddHangfireServices(configuration)
                 .AddhealthChecks()
                 .AddRateLimiting()
+                .AddURLServices(configuration)
                 .AddOpenApiWithJwt()
                 .AddCloudinaryServices(configuration);
 
@@ -38,7 +39,13 @@ namespace SurveyBasket.API.Infrastructure
                     "Connection string 'DefaultConnection' not found.");
 
             services.AddDbContext<ApplicationDBContext>(options =>
-                options.UseSqlServer(connectionString));
+                options.UseSqlServer(connectionString, sqlOptions =>
+                    sqlOptions.EnableRetryOnFailure(
+                        maxRetryCount: 5,
+                        maxRetryDelay: TimeSpan.FromSeconds(10),
+                        errorNumbersToAdd: null
+                    )
+                ));
 
             return services;
         }

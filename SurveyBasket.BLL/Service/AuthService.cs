@@ -9,6 +9,7 @@ public class AuthService : IAuthService
     private readonly IEmailSender _emailsender;
     private readonly IBackgroundJobClient _backgroundjob;
     private readonly IHttpContextAccessor _httpcontextaccessor;
+    private readonly AppURLSetting _appURL; 
     private readonly int _refreshTokenValidityInDays = 14;
 
     public AuthService(
@@ -18,7 +19,8 @@ public class AuthService : IAuthService
         ILogger<AuthService> logger,
         IEmailSender emailSender,
         IBackgroundJobClient backgroundJob,
-        IHttpContextAccessor httpContextAccessor)
+        IHttpContextAccessor httpContextAccessor,
+        IOptions<AppURLSetting> appURL)
     {
         _userrepository = userRepository;
         _signinmanager = signInManager;
@@ -27,6 +29,7 @@ public class AuthService : IAuthService
         _emailsender = emailSender;
         _backgroundjob = backgroundJob;
         _httpcontextaccessor = httpContextAccessor;
+        _appURL = appURL.Value;
     }
 
     public async Task<Result<loginResponseDTO>> LoginAsync(string email, string password, CancellationToken cancellationToken)
@@ -243,12 +246,11 @@ public class AuthService : IAuthService
 
     private async Task sendConfirmationEmail(ApplicationUser user, string code)
     {
-        var origin = _httpcontextaccessor.HttpContext?.Request.Headers.Origin;
         var emailBody = EmailBodyBuilder.GenerateEmailBody("EmailConfirmation",
             new Dictionary<string, string>
             {
-                { "{name}", user.firstName },
-                { "{action_url}", $"{origin}/auth/confirmEmail?email={user.Email}&code={code}" }
+            { "{name}", user.firstName },
+            { "{action_url}", $"{_appURL.BaseUrl}api/auth/Confirm-Email?userId={user.Id}&code={code}" }
             });
         _backgroundjob.Enqueue<IEmailSender>(x =>
             x.SendEmailAsync(user.Email!, "✅ Survey Basket : Email Confirmation", emailBody));
@@ -257,12 +259,11 @@ public class AuthService : IAuthService
 
     private async Task sendResetPasswordEmail(ApplicationUser user, string code)
     {
-        var origin = _httpcontextaccessor.HttpContext?.Request.Headers.Origin;
         var emailBody = EmailBodyBuilder.GenerateEmailBody("ResetPassword",
             new Dictionary<string, string>
             {
-                { "{{UserName}}", user.firstName },
-                { "{{ResetLink}}", $"{origin}/auth/forgetPassword?email={user.Email}&code={code}" }
+            { "{{UserName}}", user.firstName },
+            { "{{ResetLink}}", $"{_appURL.BaseUrl}api/auth/Reset-Password?email={user.Email}&code={code}" }
             });
         _backgroundjob.Enqueue<IEmailSender>(x =>
             x.SendEmailAsync(user.Email!, "🔑 Survey Basket : Reset Password Email", emailBody));

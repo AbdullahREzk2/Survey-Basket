@@ -62,13 +62,11 @@ public class AuthController : ControllerBase
     }
     #endregion
 
-
     #region Confirm-Email
-    [HttpPost("Confirm-Email")]
-    public async Task<IActionResult> ConfirmEmail([FromBody] ConfirmEmailRequestDTO request)
+    [HttpGet("Confirm-Email")]
+    public async Task<IActionResult> ConfirmEmail([FromQuery] ConfirmEmailRequestDTO request)
     {
         var result = await _authservice.ConfirmEmailAsync(request);
-
         return result.IsSuccess
             ? Ok()
             : result.ToProblem();

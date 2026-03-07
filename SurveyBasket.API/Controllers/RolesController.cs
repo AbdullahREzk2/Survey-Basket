@@ -17,11 +17,11 @@ public class RolesController(IRoleService roleService) : ControllerBase
     #endregion
 
     #region get role details
-    [HttpGet("getRoleDetails/{RoleId}")]
+    [HttpGet("getRoleDetails/{Id}")]
     [HasPermission(Permissions.GetRoles)]
-    public async Task<IActionResult> getRoleDetails(string RoleId)
+    public async Task<IActionResult> getRoleDetails(string Id)
     {
-        var roleDetails = await _roleservice.getRoleDetails(RoleId);
+        var roleDetails = await _roleservice.getRoleDetails(Id);
 
         return roleDetails.IsSuccess ?
              Ok(roleDetails.Value)
