@@ -142,6 +142,7 @@ SurveyBasket/
 | API Docs | Scalar (OpenAPI) |
 | Health Checks | AspNetCore.Diagnostics.HealthChecks |
 | Rate Limiting | ASP.NET Core Built-in Rate Limiter |
+| CQRS + MediatR | Feature-based request/response pipeline |
 
 ### Design Patterns
 - ✅ Repository Pattern
@@ -149,6 +150,10 @@ SurveyBasket/
 - ✅ DTO Pattern
 - ✅ Options Pattern
 - ✅ Background Job Pattern
+- ✅ CQRS Pattern (Commands & Queries)
+- ✅ Mediator Pattern (MediatR)
+
+
 
 ---
 
