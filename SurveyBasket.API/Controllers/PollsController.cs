@@ -33,7 +33,7 @@ public class PollsController(IMediator mediator) : ControllerBase
     [HasPermission(Permissions.GetPolls)]
     public async Task<IActionResult> GetAvailablePolls(CancellationToken cancellationToken)
     {
-        var pollsResult = await _mediator.Send(new GetAvalibleQuery(),cancellationToken);
+        var pollsResult = await _mediator.Send(new GetAvaliblePollsQuery(),cancellationToken);
 
         return pollsResult.IsSuccess
             ? Ok(pollsResult.Value)
@@ -98,7 +98,7 @@ public class PollsController(IMediator mediator) : ControllerBase
     [HasPermission(Permissions.UpdatePolls)]
     public async Task<IActionResult> PublishPoll(int pollId, CancellationToken cancellationToken)
     {
-        var publishedPoll = await _mediator.Send(new PublishToggleCommand(pollId), cancellationToken);
+        var publishedPoll = await _mediator.Send(new PollPublishToggleCommand(pollId), cancellationToken);
 
         return publishedPoll.IsSuccess
             ? Ok()

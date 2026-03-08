@@ -1,9 +1,9 @@
 ﻿namespace SurveyBasket.BLL.Features.Polls.Commands.PublishToggle;
-public class PublishToggleCommandHandler(IPollRepository pollRepository) : IRequestHandler<PublishToggleCommand, Result>
+public class PollPublishToggleCommandHandler(IPollRepository pollRepository) : IRequestHandler<PollPublishToggleCommand, Result>
 {
     private readonly IPollRepository _pollrepository = pollRepository;
 
-    public async Task<Result> Handle(PublishToggleCommand request, CancellationToken cancellationToken)
+    public async Task<Result> Handle(PollPublishToggleCommand request, CancellationToken cancellationToken)
     {
         var isUpdated = await _pollrepository.publishToggle(request.pollId, cancellationToken);
         if (!isUpdated)

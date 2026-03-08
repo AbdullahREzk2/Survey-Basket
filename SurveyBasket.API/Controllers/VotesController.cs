@@ -1,25 +1,21 @@
-﻿namespace SurveyBasket.API.Controllers;
+﻿using SurveyBasket.BLL.Features.Questions.Query.GetAvailableQuestion;
+using SurveyBasket.BLL.Features.Votes.Command;
+
+namespace SurveyBasket.API.Controllers;
 [Route("api/[controller]")]
 [ApiController]
 [Authorize(Roles = defaultRoles.Member.Name)]
-public class VotesController : ControllerBase
+public class VotesController(IMediator mediator) : ControllerBase
 {
-    private readonly IQuestionService _questionservice;
-    private readonly IVoteService _voteservice;
+    private readonly IMediator _mediator = mediator;
 
-    public VotesController(IQuestionService questionService, IVoteService voteService)
-    {
-        _questionservice = questionService;
-        _voteservice = voteService;
-    }
 
     #region get availble questions for poll
     [HttpGet("get-availble-questions/{pollId}")]
     public async Task<IActionResult> getAvailble(int pollId, CancellationToken cancellationToken)
     {
-        string userId = User.GetUserId()!;
 
-        var result = await _questionservice.GetAvailableQuestionsAsync(pollId, userId, cancellationToken);
+        var result = await _mediator.Send(new GetAvailableQuestionQuery(pollId,User.GetUserId()!));
 
         return result.IsSuccess ? Ok(result.Value) : result.ToProblem();
 
@@ -30,7 +26,7 @@ public class VotesController : ControllerBase
     [HttpPost("{pollId}/votes")]
     public async Task<IActionResult> AddVote(int pollId, [FromBody] VoteRequest request, CancellationToken cancellationToken)
     {
-        var result = await _voteservice.AddVoteAsync(pollId, User.GetUserId()!, request, cancellationToken);
+        var result = await _mediator.Send(new AddVoteCommand(pollId, User.GetUserId()!, request));
 
         return result.IsSuccess
             ? NoContent()

@@ -1,38 +1,31 @@
-﻿namespace SurveyBasket.BLL.Service;
-public class VoteService : IVoteService
+﻿namespace SurveyBasket.BLL.Features.Votes.Command;
+public class AddVoteCommandHandler(IVoteRepository voteRepository,IPollRepository pollRepository,IQuestionRepository questionRepository) : IRequestHandler<AddVoteCommand, Result>
 {
-    private readonly IPollRepository _pollrepository;
-    private readonly IVoteRepository _voterepository;
-    private readonly IQuestionRepository _questionrepository;
+    private readonly IVoteRepository _voterepository = voteRepository;
+    private readonly IPollRepository _pollrepository = pollRepository;
+    private readonly IQuestionRepository _questionrepository = questionRepository;
 
-    public VoteService(IPollRepository pollRepository, IVoteRepository voteRepository, IQuestionRepository questionRepository)
-    {
-        _pollrepository = pollRepository;
-        _voterepository = voteRepository;
-        _questionrepository = questionRepository;
-    }
-
-    public async Task<Result> AddVoteAsync(int pollId, string userId, VoteRequest voteRequest, CancellationToken cancellationToken)
+    public async Task<Result> Handle(AddVoteCommand request, CancellationToken cancellationToken)
     {
         var hasVoted = await _voterepository
-            .HasUserVotedAsync(pollId, userId, cancellationToken);
+                    .HasUserVotedAsync(request.pollId, request.userId, cancellationToken);
 
         if (hasVoted)
             return Result.Failure(VoteErrors.UserAlreadyVoted);
 
         var poll = await _pollrepository
-            .getAvailblePollAsync(pollId, cancellationToken);
+            .getAvailblePollAsync(request.pollId, cancellationToken);
 
         if (poll is null)
             return Result.Failure(PollErrors.PollNotFound);
 
         var questions = await _questionrepository
-            .GetAvailbaleForPollAsync(pollId, cancellationToken);
+            .GetAvailbaleForPollAsync(request.pollId, cancellationToken);
 
         if (!questions.Any())
             return Result.Failure(VoteErrors.InvalidQuestions);
 
-        if (voteRequest.Answers
+        if (request.voteRequest.Answers
             .GroupBy(x => x.QuestionId)
             .Any(g => g.Count() > 1))
         {
@@ -43,7 +36,7 @@ public class VoteService : IVoteService
             .Select(q => q.questionId)
             .ToHashSet();
 
-        var answeredQuestionIds = voteRequest.Answers
+        var answeredQuestionIds =request.voteRequest.Answers
             .Select(a => a.QuestionId)
             .ToHashSet();
 
@@ -56,7 +49,7 @@ public class VoteService : IVoteService
             q => q.answers.Select(a => a.answerId).ToHashSet()
         );
 
-        foreach (var answer in voteRequest.Answers)
+        foreach (var answer in request.voteRequest.Answers)
         {
             if (!validAnswersMap.TryGetValue(answer.QuestionId, out var validAnswers) ||
                 !validAnswers.Contains(answer.AnswerId))
@@ -67,9 +60,9 @@ public class VoteService : IVoteService
 
         var vote = new Vote
         {
-            PollId = pollId,
-            UserId = userId,
-            voteAnswers = voteRequest.Answers
+            PollId = request.pollId,
+            UserId = request.userId,
+            voteAnswers = request.voteRequest.Answers
                 .Adapt<List<VoteAnswer>>()
         };
 
@@ -81,5 +74,4 @@ public class VoteService : IVoteService
 
         return Result.Success();
     }
-
 }

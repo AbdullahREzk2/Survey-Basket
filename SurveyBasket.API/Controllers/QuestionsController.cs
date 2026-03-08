@@ -1,21 +1,23 @@
-﻿namespace SurveyBasket.API.Controllers;
+﻿using SurveyBasket.BLL.Features.Questions.Command.ActiveToggleQuestion;
+using SurveyBasket.BLL.Features.Questions.Command.AddQuestion;
+using SurveyBasket.BLL.Features.Questions.Command.UpdateQuestion;
+using SurveyBasket.BLL.Features.Questions.Query.GetAllQuestionsForPoll;
+using SurveyBasket.BLL.Features.Questions.Query.GetQuestionById;
+
+namespace SurveyBasket.API.Controllers;
 [Route("api/[controller]")]
 [ApiController]
-public class QuestionsController : ControllerBase
+public class QuestionsController(IMediator mediator) : ControllerBase
 {
-    private readonly IQuestionService _questionservice;
+    private readonly IMediator _mediator = mediator;
 
-    public QuestionsController(IQuestionService questionService)
-    {
-        _questionservice = questionService;
-    }
 
     #region getAllQuestionsForPoll
     [HttpGet("getAllQuestions / {pollId}")]
     [HasPermission(Permissions.GetQuestions)]
-    public async Task<IActionResult> getAllQuestionsForPollAsync(int pollId, [FromQuery] RequestFilters filters, CancellationToken cancellationToken)
+    public async Task<IActionResult> getAllQuestionsForPollAsync(int pollId, [FromQuery] RequestFilters filters)
     {
-        var questionsResult = await _questionservice.GetAllQuestionsForPollAsync(pollId, filters, cancellationToken);
+        var questionsResult = await _mediator.Send(new GetAllQuestionsForPollQuery(pollId, filters));
 
         return questionsResult.IsSuccess
             ? Ok(questionsResult.Value)
@@ -27,9 +29,9 @@ public class QuestionsController : ControllerBase
     [HttpGet("getQuestion /{pollId}/{questionId}")]
     [HasPermission(Permissions.GetQuestions)]
 
-    public async Task<IActionResult> getQuestionByIdAsync(int pollId, int questionId, CancellationToken cancellationToken)
+    public async Task<IActionResult> getQuestionByIdAsync(int pollId, int questionId)
     {
-        var question = await _questionservice.GetQuestionByIdAsync(pollId, questionId, cancellationToken);
+        var question = await _mediator.Send(new GetQuestionByIdQuery(pollId, questionId));
 
         return question.IsSuccess
             ? Ok(question.Value)
@@ -43,7 +45,7 @@ public class QuestionsController : ControllerBase
 
     public async Task<IActionResult> addQuestionAsync(int pollId, QuestionRequestDTO question, CancellationToken cancellationToken)
     {
-        var addResponse = await _questionservice.AddQuestionAsync(pollId, question, cancellationToken);
+        var addResponse = await _mediator.Send(new AddQuestionCommand(pollId, question));
 
         return addResponse.IsSuccess
             ? Ok(addResponse.Value)
@@ -57,8 +59,7 @@ public class QuestionsController : ControllerBase
 
     public async Task<IActionResult> UpdateQuestionAsync(int pollId, int questionId, [FromBody] QuestionRequestDTO question, CancellationToken cancellationToken)
     {
-        var result = await _questionservice
-            .UpdateQuestionAsync(pollId, questionId, question, cancellationToken);
+        var result = await _mediator.Send(new UpdateQuestionCommand(pollId, questionId, question));
 
         return result.IsSuccess
             ? NoContent()
@@ -71,8 +72,7 @@ public class QuestionsController : ControllerBase
     [HasPermission(Permissions.UpdateQuestions)]
     public async Task<IActionResult> activateQuestionAsync(int pollId, int questionId, CancellationToken cancellationToken)
     {
-        var result = await _questionservice
-            .activeToggleQuestion(pollId, questionId, cancellationToken);
+        var result = await _mediator.Send(new ActiveToggleQuestionCommand(pollId, questionId));
 
         return result.IsSuccess
             ? NoContent()

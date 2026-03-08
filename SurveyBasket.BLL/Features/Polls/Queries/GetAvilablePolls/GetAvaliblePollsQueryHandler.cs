@@ -1,9 +1,9 @@
 ﻿namespace SurveyBasket.BLL.Features.Polls.Queries.GetAvilablePolls;
-public class GetAvalibleQueryHandler(IPollRepository pollRepository) : IRequestHandler<GetAvalibleQuery, Result<IEnumerable<PollResponseDTO>>>
+public class GetAvaliblePollsQueryHandler(IPollRepository pollRepository) : IRequestHandler<GetAvaliblePollsQuery, Result<IEnumerable<PollResponseDTO>>>
 {
     private readonly IPollRepository _pollrepository = pollRepository;
 
-    public async Task<Result<IEnumerable<PollResponseDTO>>> Handle(GetAvalibleQuery request, CancellationToken cancellationToken)
+    public async Task<Result<IEnumerable<PollResponseDTO>>> Handle(GetAvaliblePollsQuery request, CancellationToken cancellationToken)
     {
         var polls = await _pollrepository.getAvailblePollsAsync(cancellationToken);
         var response = polls.Adapt<IEnumerable<PollResponseDTO>>();
