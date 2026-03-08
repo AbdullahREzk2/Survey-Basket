@@ -1,23 +1,23 @@
-﻿namespace SurveyBasket.BLL.Service;
-
-public class NotificationService(
+﻿namespace SurveyBasket.BLL.Features.Notifications.Command.SendNewPollNotification;
+public class SendNewPollNotificationCommandHandler(
     IPollRepository pollRepository,
     IUserRepository userRepository,
     IEmailSender emailSender,
     IOptions<AppURLSetting> appUrlSettings
-    ) : INotificationService
+) : IRequestHandler<SendNewPollNotificationCommand, Unit>
 {
     private readonly IPollRepository _pollrepository = pollRepository;
     private readonly IUserRepository _userrepository = userRepository;
     private readonly IEmailSender _emailsender = emailSender;
     private readonly string _baseUrl = appUrlSettings.Value.BaseUrl;
 
-    public async Task sendNewNotificationPollAsync(int? pollId = null, CancellationToken cancellationToken = default)
+    public async Task<Unit> Handle(SendNewPollNotificationCommand request, CancellationToken cancellationToken)
     {
         IEnumerable<PollResponseDTO> pollsItem;
-        if (pollId.HasValue)
+
+        if (request.PollId.HasValue)
         {
-            var pollModel = await _pollrepository.getTodayPoll(pollId, cancellationToken);
+            var pollModel = await _pollrepository.getTodayPoll(request.PollId, cancellationToken);
             pollsItem = new List<PollResponseDTO> { pollModel.Adapt<PollResponseDTO>() };
         }
         else
@@ -27,10 +27,10 @@ public class NotificationService(
         }
 
         if (!pollsItem.Any())
-            return;
+            return Unit.Value;
 
         var pollItemsHtml = GeneratePollItemsHtml(pollsItem);
-        var users = await _userrepository.GetAllUsersAsync(cancellationToken); // ← DAL call
+        var users = await _userrepository.GetAllUsersAsync(cancellationToken);
 
         foreach (var user in users)
         {
@@ -42,8 +42,9 @@ public class NotificationService(
             var body = EmailBodyBuilder.GenerateEmailBody("DailyPollNotification", placeHolders);
             await _emailsender.SendEmailAsync(user.Email!, "🎤 New Polls Available Today", body);
         }
-    }
 
+        return Unit.Value;
+    }
     private string GeneratePollItemsHtml(IEnumerable<PollResponseDTO> polls)
     {
         var builder = new StringBuilder();

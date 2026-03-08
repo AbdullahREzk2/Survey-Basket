@@ -98,9 +98,6 @@ namespace SurveyBasket.API.Infrastructure
             services.AddScoped<IAuthService, AuthService>();
             services.AddSingleton<IJwtProvider, JwtProvider>();
             services.AddScoped<ICurrentUserService, CurrentUserService>();
-            services.AddScoped<INotificationService, NotificationService>();
-            services.AddScoped<IUserService, UserService>();
-            services.AddScoped<IRoleService, RoleService>();
 
             services.AddMediatR(cfg =>
                 cfg.RegisterServicesFromAssembly(typeof(GetAllPollsQueryHandler).Assembly));
