@@ -1,21 +1,22 @@
-﻿namespace SurveyBasket.API.Controllers;
+﻿using SurveyBasket.BLL.Features.Dashboard.Query.GetPollVotes;
+using SurveyBasket.BLL.Features.Dashboard.Query.GetQuestionVotes;
+using SurveyBasket.BLL.Features.Dashboard.Query.GetVotesPerDay;
+
+namespace SurveyBasket.API.Controllers;
 [Route("api/[controller]")]
 [ApiController]
 [HasPermission(Permissions.Results)]
-public class DashboardController : ControllerBase
+public class DashboardController(IMediator mediator) : ControllerBase
 {
-    private readonly IDashboardService _dashboardservice;
+    private readonly IMediator _mediator = mediator;
 
-    public DashboardController(IDashboardService dashboardService)
-    {
-        _dashboardservice = dashboardService;
-    }
+
 
     #region Dashboard-statics
     [HttpGet("get-Dashboard-statics/{pollId}")]
     public async Task<IActionResult> DashboardStatics(int pollId, CancellationToken cancellationToken)
     {
-        var result = await _dashboardservice.GetPollVotesAsync(pollId, cancellationToken);
+        var result = await _mediator.Send(new GetPollVotesQuery(pollId), cancellationToken);
         return result.IsSuccess
              ? Ok(result.Value)
              : result.ToProblem();
@@ -26,7 +27,7 @@ public class DashboardController : ControllerBase
     [HttpGet("get-votes-per-day/{pollId}")]
     public async Task<IActionResult> GetVotesPerDay(int pollId, CancellationToken cancellationToken)
     {
-        var result = await _dashboardservice.getVotesPerDay(pollId, cancellationToken);
+        var result = await _mediator.Send(new GetVotesPerDayQuery(pollId),cancellationToken);
 
         return result.IsSuccess
              ? Ok(result.Value)
@@ -38,7 +39,7 @@ public class DashboardController : ControllerBase
     [HttpGet("get-votes-per-question/{pollId}")]
     public async Task<IActionResult> GetVotesPerQuestion(int pollId, CancellationToken cancellationToken)
     {
-        var result = await _dashboardservice.GetQuestionVotesAsync(pollId, cancellationToken);
+        var result = await _mediator.Send(new GetQuestionVotesQuery(pollId), cancellationToken);
 
         return result.IsSuccess
              ? Ok(result.Value)

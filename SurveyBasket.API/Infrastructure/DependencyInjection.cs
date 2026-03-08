@@ -95,13 +95,11 @@ namespace SurveyBasket.API.Infrastructure
         {
             services.AddHttpContextAccessor();
 
-            services.AddScoped<IPollService, PollService>();
             services.AddScoped<IAuthService, AuthService>();
             services.AddSingleton<IJwtProvider, JwtProvider>();
             services.AddScoped<ICurrentUserService, CurrentUserService>();
             services.AddScoped<IQuestionService, QuestionService>();
             services.AddScoped<IVoteService, VoteService>();
-            services.AddScoped<IDashboardService, DashboardService>();
             services.AddScoped<INotificationService, NotificationService>();
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<IRoleService, RoleService>();
