@@ -1,22 +1,26 @@
-﻿namespace SurveyBasket.API.Controllers;
+﻿using SurveyBasket.BLL.Features.Polls.Commands.AddPoll;
+using SurveyBasket.BLL.Features.Polls.Commands.DeletePoll;
+using SurveyBasket.BLL.Features.Polls.Commands.PublishToggle;
+using SurveyBasket.BLL.Features.Polls.Commands.UpdatePoll;
+using SurveyBasket.BLL.Features.Polls.Queries.GetAllPolls;
+using SurveyBasket.BLL.Features.Polls.Queries.GetAvilablePolls;
+using SurveyBasket.BLL.Features.Polls.Queries.GetPollById;
+
+namespace SurveyBasket.API.Controllers;
 [Route("api/[controller]")]
 [ApiController]
 
-public class PollsController : ControllerBase
+public class PollsController(IMediator mediator) : ControllerBase
 {
-    private readonly IPollService _pollservice;
+    private readonly IMediator _mediator = mediator;
 
-    public PollsController(IPollService pollService)
-    {
-        _pollservice = pollService;
-    }
 
     #region getAllPolls
     [HttpGet("getAllPolls")]
     [HasPermission(Permissions.GetPolls)]
     public async Task<IActionResult> GetAllPolls(CancellationToken cancellationToken)
     {
-        var pollsResult = await _pollservice.getAllPollsAsync(cancellationToken);
+        var pollsResult = await _mediator.Send(new GetAllPollsQuery(),cancellationToken );
 
         return pollsResult.IsSuccess
             ? Ok(pollsResult.Value)
@@ -29,7 +33,7 @@ public class PollsController : ControllerBase
     [HasPermission(Permissions.GetPolls)]
     public async Task<IActionResult> GetAvailablePolls(CancellationToken cancellationToken)
     {
-        var pollsResult = await _pollservice.getAvailblePollsAsync(cancellationToken);
+        var pollsResult = await _mediator.Send(new GetAvalibleQuery(),cancellationToken);
 
         return pollsResult.IsSuccess
             ? Ok(pollsResult.Value)
@@ -42,7 +46,7 @@ public class PollsController : ControllerBase
     [HasPermission(Permissions.GetPolls)]
     public async Task<IActionResult> GetPollById(int pollId, CancellationToken cancellationToken)
     {
-        var pollResult = await _pollservice.getPollByIdAsync(pollId, cancellationToken);
+        var pollResult = await _mediator.Send(new GetPollByIdQuery(pollId), cancellationToken);
 
         return pollResult.IsSuccess
             ? Ok(pollResult.Value)
@@ -55,7 +59,7 @@ public class PollsController : ControllerBase
     [HasPermission(Permissions.AddPolls)]
     public async Task<IActionResult> AddPoll([FromBody] PollRequestDTO pollRequest, CancellationToken cancellationToken)
     {
-        var createdPoll = await _pollservice.AddPollAsync(pollRequest, cancellationToken);
+        var createdPoll = await _mediator.Send(new AddPollCommand(pollRequest), cancellationToken);
 
         return createdPoll.IsSuccess
             ? CreatedAtAction(nameof(GetPollById), new { pollId = createdPoll.Value.PollId }, createdPoll.Value)
@@ -68,7 +72,7 @@ public class PollsController : ControllerBase
     [HasPermission(Permissions.UpdatePolls)]
     public async Task<IActionResult> UpdatePoll(int pollId, [FromBody] PollRequestDTO pollRequest, CancellationToken cancellationToken)
     {
-        var updatedPoll = await _pollservice.UpdatePollAsync(pollId, pollRequest, cancellationToken);
+        var updatedPoll = await _mediator.Send(new UpdatePollCommand(pollId,pollRequest), cancellationToken);
 
         return updatedPoll.IsSuccess
             ? Ok(updatedPoll.Value)
@@ -81,7 +85,7 @@ public class PollsController : ControllerBase
     [HasPermission(Permissions.deletePolls)]
     public async Task<IActionResult> DeletePoll(int pollId, CancellationToken cancellationToken)
     {
-        var isDeleted = await _pollservice.DeletePollAsync(pollId, cancellationToken);
+        var isDeleted = await _mediator.Send(new DeletePollCommand(pollId), cancellationToken);
 
         return isDeleted.IsSuccess
             ? NoContent()
@@ -94,7 +98,7 @@ public class PollsController : ControllerBase
     [HasPermission(Permissions.UpdatePolls)]
     public async Task<IActionResult> PublishPoll(int pollId, CancellationToken cancellationToken)
     {
-        var publishedPoll = await _pollservice.publishToggle(pollId, cancellationToken);
+        var publishedPoll = await _mediator.Send(new PublishToggleCommand(pollId), cancellationToken);
 
         return publishedPoll.IsSuccess
             ? Ok()

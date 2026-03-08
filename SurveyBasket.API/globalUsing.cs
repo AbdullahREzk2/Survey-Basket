@@ -39,3 +39,4 @@ global using SurveyBasket.DAL.Persistence;
 global using SurveyBasket.DAL.Repository;
 global using SurveyBasket.DAL.seedData;
 global using SurveyBasket.Shared;
+global using MediatR;

@@ -38,6 +38,7 @@ global using SurveyBasket.BLL.Settings;
 global using SurveyBasket.DAL.Entities;
 global using SurveyBasket.DAL.IRepository;
 global using SurveyBasket.DAL.seedData;
+global using MediatR;
 
 
 

@@ -1,6 +1,7 @@
 ﻿using System.Threading.RateLimiting;
 using Microsoft.OpenApi;
 using SurveyBasket.API.Health;
+using SurveyBasket.BLL.Features.Polls.Queries.GetAllPolls;
 using SurveyBasket.BLL.Setting;
 
 namespace SurveyBasket.API.Infrastructure
@@ -104,6 +105,9 @@ namespace SurveyBasket.API.Infrastructure
             services.AddScoped<INotificationService, NotificationService>();
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<IRoleService, RoleService>();
+
+            services.AddMediatR(cfg =>
+                cfg.RegisterServicesFromAssembly(typeof(GetAllPollsQueryHandler).Assembly));
 
             return services;
         }
