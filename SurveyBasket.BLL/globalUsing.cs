@@ -33,7 +33,6 @@ global using SurveyBasket.BLL.Contracts.Votes;
 global using SurveyBasket.BLL.CurrentUserService;
 global using SurveyBasket.BLL.Errors;
 global using SurveyBasket.BLL.Helpers;
-global using SurveyBasket.BLL.IService;
 global using SurveyBasket.BLL.Settings;
 global using SurveyBasket.DAL.Entities;
 global using SurveyBasket.DAL.IRepository;

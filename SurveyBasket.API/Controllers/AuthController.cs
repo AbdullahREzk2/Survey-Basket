@@ -1,25 +1,27 @@
 ﻿using Microsoft.AspNetCore.RateLimiting;
+using SurveyBasket.BLL.Features.Auth.Command.ConfirmEmail;
+using SurveyBasket.BLL.Features.Auth.Command.Login;
+using SurveyBasket.BLL.Features.Auth.Command.Register;
+using SurveyBasket.BLL.Features.Auth.Command.ResetPassword;
+using SurveyBasket.BLL.Features.Auth.Command.RevokeRefreshToken;
+using SurveyBasket.BLL.Features.Auth.Query.GetRefreshToken;
+using SurveyBasket.BLL.Features.Auth.Query.ResendConfimationEmail;
+using SurveyBasket.BLL.Features.Auth.Query.SendResetPassword;
 
 namespace SurveyBasket.API.Controllers;
 [Route("api/[controller]")]
 [ApiController]
 [EnableRateLimiting("ipLimit")]
-public class AuthController : ControllerBase
+public class AuthController(IMediator mediator) : ControllerBase
 {
-    private readonly IAuthService _authservice;
-    private readonly JwtOptions _jwtoptions;
+    private readonly IMediator _mediator = mediator;
 
-    public AuthController(IAuthService authService, IOptions<JwtOptions> jwtOptions)
-    {
-        _authservice = authService;
-        _jwtoptions = jwtOptions.Value;
-    }
 
     #region Login
     [HttpPost("login")]
     public async Task<IActionResult> Login([FromBody] loginRequestDTO request, CancellationToken cancellationToken)
     {
-        var authResult = await _authservice.LoginAsync(request.Email, request.Password, cancellationToken);
+        var authResult = await _mediator.Send(new LoginCommand(request.Email, request.Password));
         return authResult.IsSuccess ? Ok(authResult.Value) : authResult.ToProblem();
     }
     #endregion
@@ -28,7 +30,7 @@ public class AuthController : ControllerBase
     [HttpPost("refresh")]
     public async Task<IActionResult> Refresh([FromBody] refreshTokenRequest request, CancellationToken cancellationToken)
     {
-        var result = await _authservice.GetRefreshTokenAsync(request.Token, request.RefreshToken, cancellationToken);
+        var result = await _mediator.Send(new GetRefreshTokenQuery(request.Token, request.RefreshToken));
 
         return result.IsSuccess
             ? Ok(result)
@@ -41,7 +43,7 @@ public class AuthController : ControllerBase
     [HttpPost("revoke-refresh-token")]
     public async Task<IActionResult> revokeRefreshToken([FromBody] refreshTokenRequest request, CancellationToken cancellationToken)
     {
-        var isRevoked = await _authservice.RevokeRefreshTokenAsync(request.Token, request.RefreshToken, cancellationToken);
+        var isRevoked = await _mediator.Send(new RevokeRefreshTokenCommand(request.Token, request.RefreshToken));
 
         return isRevoked.IsSuccess
             ? Ok()
@@ -54,7 +56,7 @@ public class AuthController : ControllerBase
     [HttpPost("Register")]
     public async Task<IActionResult> Register([FromBody] RegisterRequestDTO request, CancellationToken cancellationToken)
     {
-        var result = await _authservice.RegisterAsync(request, cancellationToken);
+        var result = await _mediator.Send(new RegisterCommand(request));
 
         return result.IsSuccess
             ? Ok()
@@ -66,7 +68,7 @@ public class AuthController : ControllerBase
     [HttpGet("Confirm-Email")]
     public async Task<IActionResult> ConfirmEmail([FromQuery] ConfirmEmailRequestDTO request)
     {
-        var result = await _authservice.ConfirmEmailAsync(request);
+        var result = await _mediator.Send(new ConfirmEmailCommand(request));
         return result.IsSuccess
             ? Ok()
             : result.ToProblem();
@@ -77,7 +79,7 @@ public class AuthController : ControllerBase
     [HttpPost("Resend-Confirm-Email")]
     public async Task<IActionResult> ResendConfirmEmail([FromBody] ResendConfirmationEmailRequest request)
     {
-        var result = await _authservice.ResendConfirmationEmailAsync(request);
+        var result = await _mediator.Send(new ResendConfirmationEmailQuery(request));
 
         return result.IsSuccess
             ? Ok()
@@ -90,7 +92,7 @@ public class AuthController : ControllerBase
     [HttpPost("forget-Password")]
     public async Task<IActionResult> forgetPassword([FromBody] ForgetPasswordRequest request)
     {
-        var result = await _authservice.SendResetPasswordAsync(request);
+        var result = await _mediator.Send(new SendResetPasswordQuery(request));
 
         return result.IsSuccess
             ? Ok()
@@ -102,7 +104,7 @@ public class AuthController : ControllerBase
     [HttpPost("Reset-Password")]
     public async Task<IActionResult> ResetPassword([FromBody] ResetPasswordRequest request)
     {
-        var result = await _authservice.ResetPasswordAsync(request);
+        var result = await _mediator.Send(new ResetPasswordCommand(request));
         return result.IsSuccess
             ? Ok()
             : result.ToProblem();

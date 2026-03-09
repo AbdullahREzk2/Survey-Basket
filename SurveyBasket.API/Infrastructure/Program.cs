@@ -1,6 +1,7 @@
 using HangfireBasicAuthenticationFilter;
 using HealthChecks.UI.Client;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
+using SurveyBasket.BLL.Features.Notifications.Command.SendNewPollNotification;
 namespace SurveyBasket.API.Infrastructure
 {
     public class Program
@@ -46,9 +47,12 @@ namespace SurveyBasket.API.Infrastructure
 
             var scopeFactory = app.Services.GetRequiredService<IServiceScopeFactory>();
             using var scope = scopeFactory.CreateScope();
-            var notificationService = scope.ServiceProvider.GetRequiredService<INotificationService>();
-            RecurringJob.AddOrUpdate("sendNewNotificationPollAsync", () => notificationService.sendNewNotificationPollAsync(null, CancellationToken.None), Cron.Daily);
-
+            var mediator = scope.ServiceProvider.GetRequiredService<IMediator>();
+            RecurringJob.AddOrUpdate(
+                "sendNewNotificationPollAsync",
+                () => mediator.Send(new SendNewPollNotificationCommand(null), CancellationToken.None),
+                Cron.Daily
+            );
             app.UseRateLimiter();
 
             app.UseAuthentication();

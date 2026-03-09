@@ -1,16 +1,23 @@
-﻿namespace SurveyBasket.API.Controllers;
+﻿using SurveyBasket.BLL.Features.Users.Command.CreateUser;
+using SurveyBasket.BLL.Features.Users.Command.UnlockUser;
+using SurveyBasket.BLL.Features.Users.Command.UpdateUser;
+using SurveyBasket.BLL.Features.Users.Command.UserToggleStatus;
+using SurveyBasket.BLL.Features.Users.Query.GetAllUsers;
+using SurveyBasket.BLL.Features.Users.Query.GetUserDetails;
+
+namespace SurveyBasket.API.Controllers;
 [Route("api/[controller]")]
 [ApiController]
-public class UsersController(IUserService userService) : ControllerBase
+public class UsersController(IMediator mediator) : ControllerBase
 {
-    private readonly IUserService _userservice = userService;
+    private readonly IMediator _mediator = mediator;
 
     #region get All users 
     [HttpGet("get-all-users")]
     [HasPermission(Permissions.GetUsers)]
     public async Task<IActionResult> getAllUsers(CancellationToken cancellationToken)
     {
-        return Ok(await _userservice.GetAllUsersAsync(cancellationToken));
+        return Ok(await _mediator.Send(new GetAllUsersQuery()));
     }
     #endregion
 
@@ -19,7 +26,7 @@ public class UsersController(IUserService userService) : ControllerBase
     [HasPermission(Permissions.GetUsers)]
     public async Task<IActionResult> getUserDetails(string userId)
     {
-        var userDetails = await _userservice.GetUserDetailsAsync(userId);
+        var userDetails = await _mediator.Send(new GetUserDetailQuery(userId));
         return userDetails.IsSuccess ?
               Ok(userDetails.Value)
             : userDetails.ToProblem();
@@ -31,7 +38,7 @@ public class UsersController(IUserService userService) : ControllerBase
     [HasPermission(Permissions.AddUsers)]
     public async Task<IActionResult> Create([FromBody] CreateUserRequest request, CancellationToken cancellationToken)
     {
-        var result = await _userservice.createUserAsync(request, cancellationToken);
+        var result = await _mediator.Send(new CreateUserCommand(request));
 
         return result.IsSuccess ?
             CreatedAtAction(nameof(getUserDetails), new { userId = result.Value.Id }, result.Value)
@@ -44,7 +51,7 @@ public class UsersController(IUserService userService) : ControllerBase
     [HasPermission(Permissions.UpdateUsers)]
     public async Task<IActionResult> Update(string userId, [FromBody] UpdateUserRequest request, CancellationToken cancellationToken)
     {
-        var result = await _userservice.updateUserAsync(userId, request, cancellationToken);
+        var result = await _mediator.Send(new UpdateUserCommand(userId, request));
         return result.IsSuccess ?
             NoContent()
           : result.ToProblem();
@@ -56,7 +63,7 @@ public class UsersController(IUserService userService) : ControllerBase
     [HasPermission(Permissions.UpdateUsers)]
     public async Task<IActionResult> ToggleStatus(string userId)
     {
-        var result = await _userservice.toggleStatusAsync(userId);
+        var result = await _mediator.Send(new ToggleStatusCommand(userId));
         return result.IsSuccess ?
             NoContent()
           : result.ToProblem();
@@ -68,7 +75,7 @@ public class UsersController(IUserService userService) : ControllerBase
     [HasPermission(Permissions.UpdateUsers)]
     public async Task<IActionResult> Unlock(string userId)
     {
-        var result = await _userservice.unlockUserAsync(userId);
+        var result = await _mediator.Send(new UnlockUserCommand(userId));
         return result.IsSuccess ?
             NoContent()
           : result.ToProblem();

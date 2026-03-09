@@ -1,16 +1,21 @@
-﻿namespace SurveyBasket.API.Controllers;
+﻿using SurveyBasket.BLL.Features.Users.Command.ChangePassword;
+using SurveyBasket.BLL.Features.Users.Command.UpdateUserProfile;
+using SurveyBasket.BLL.Features.Users.Command.UploadProfileImage;
+using SurveyBasket.BLL.Features.Users.Query.GetProfile;
+
+namespace SurveyBasket.API.Controllers;
 [Route("api/[controller]")]
 [ApiController]
 [Authorize]
-public class AccountController(IUserService userService) : ControllerBase
+public class AccountController(IMediator mediator) : ControllerBase
 {
-    private readonly IUserService _userservice = userService;
+    private readonly IMediator _mediator = mediator;
 
     #region get user info
     [HttpGet("userInfo")]
     public async Task<IActionResult> GetUserInfo()
     {
-        var result = await _userservice.GetProfileAsync(User.GetUserId()!);
+        var result = await _mediator.Send(new GetProfileQuery(User.GetUserId()!));
 
         return result.IsSuccess ? Ok(result.Value) : result.ToProblem();
     }
@@ -20,7 +25,7 @@ public class AccountController(IUserService userService) : ControllerBase
     [HttpPut("update-User-Info")]
     public async Task<IActionResult> UpdateUserInfo([FromBody] UpdateProfileRequest request)
     {
-        await _userservice.UpdateUserProfileAsync(User.GetUserId()!, request);
+        await _mediator.Send(new UpdateUserProfileCommand(User.GetUserId()!, request));
 
         return NoContent();
     }
@@ -30,7 +35,7 @@ public class AccountController(IUserService userService) : ControllerBase
     [HttpPut("change-password")]
     public async Task<IActionResult> ChangePassword([FromBody] ChangePasswordRequest request)
     {
-        var result = await _userservice.ChangePasswordAsync(User.GetUserId()!, request);
+        var result = await _mediator.Send(new ChangePasswordCommand(User.GetUserId()!,request));
         return result.IsSuccess ? NoContent() : result.ToProblem();
     }
     #endregion
@@ -39,7 +44,7 @@ public class AccountController(IUserService userService) : ControllerBase
     [HttpPost("profile-image")]
     public async Task<IActionResult> UploadProfileImage(IFormFile image, CancellationToken cancellationToken)
     {
-        var result = await _userservice.UploadProfileImageAsync(User.GetUserId()!, image, cancellationToken);
+        var result = await _mediator.Send(new UploadProfileImageCommand(User.GetUserId()!,image));
         return result.IsSuccess ? NoContent() : result.ToProblem();
     }
     #endregion

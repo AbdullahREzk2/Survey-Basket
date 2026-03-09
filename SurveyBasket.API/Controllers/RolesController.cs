@@ -1,9 +1,15 @@
-﻿namespace SurveyBasket.API.Controllers;
+﻿using SurveyBasket.BLL.Features.Roles.Command.CreateRole;
+using SurveyBasket.BLL.Features.Roles.Command.RoleToggleStatus;
+using SurveyBasket.BLL.Features.Roles.Command.UpdateRole;
+using SurveyBasket.BLL.Features.Roles.Query.GetAllRoles;
+using SurveyBasket.BLL.Features.Roles.Query.GetRoleDetails;
+
+namespace SurveyBasket.API.Controllers;
 [Route("api/[controller]")]
 [ApiController]
-public class RolesController(IRoleService roleService) : ControllerBase
+public class RolesController(IMediator mediator) : ControllerBase
 {
-    private readonly IRoleService _roleservice = roleService;
+    private readonly IMediator _mediator = mediator;
 
 
     #region get all roles
@@ -11,7 +17,7 @@ public class RolesController(IRoleService roleService) : ControllerBase
     [HasPermission(Permissions.GetRoles)]
     public async Task<IActionResult> getAllRoles([FromQuery] bool includeDisabled, CancellationToken cancellationToken)
     {
-        var roles = await _roleservice.getAllRoles(includeDisabled, cancellationToken);
+        var roles = await _mediator.Send(new GetAllRolesQuery());
         return Ok(roles);
     }
     #endregion
@@ -21,7 +27,7 @@ public class RolesController(IRoleService roleService) : ControllerBase
     [HasPermission(Permissions.GetRoles)]
     public async Task<IActionResult> getRoleDetails(string Id)
     {
-        var roleDetails = await _roleservice.getRoleDetails(Id);
+        var roleDetails = await _mediator.Send(new GetRoleDetailsQuery(Id));
 
         return roleDetails.IsSuccess ?
              Ok(roleDetails.Value)
@@ -34,7 +40,7 @@ public class RolesController(IRoleService roleService) : ControllerBase
     [HasPermission(Permissions.AddRoles)]
     public async Task<IActionResult> createRole(RoleRequest request, CancellationToken cancellationToken)
     {
-        var createdRole = await _roleservice.CreateRole(request);
+        var createdRole = await _mediator.Send(new CreateRoleCommand(request));
         return createdRole.IsSuccess ?
             CreatedAtAction(nameof(getRoleDetails), new { createdRole.Value.Id }, createdRole.Value)
             : createdRole.ToProblem();
@@ -46,7 +52,7 @@ public class RolesController(IRoleService roleService) : ControllerBase
     [HasPermission(Permissions.UpdateRoles)]
     public async Task<IActionResult> updateRole(string RoleId, RoleRequest request)
     {
-        var updatedRole = await _roleservice.UpdateRole(RoleId, request);
+        var updatedRole = await _mediator.Send(new UpdateRoleCommand(RoleId, request));
         return updatedRole.IsSuccess ?
             NoContent()
           : updatedRole.ToProblem();
@@ -58,7 +64,7 @@ public class RolesController(IRoleService roleService) : ControllerBase
     [HasPermission(Permissions.UpdateRoles)]
     public async Task<IActionResult> updateToggleStatus(string roleId)
     {
-        var updateResult = await _roleservice.RoleToggleStatus(roleId);
+        var updateResult = await _mediator.Send(new RoleToggleStatusCommand(roleId));
 
         return updateResult.IsSuccess ?
              NoContent()

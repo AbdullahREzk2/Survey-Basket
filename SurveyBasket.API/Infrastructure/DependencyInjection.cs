@@ -2,6 +2,7 @@
 using Microsoft.OpenApi;
 using SurveyBasket.API.Health;
 using SurveyBasket.BLL.Features.Polls.Queries.GetAllPolls;
+using SurveyBasket.BLL.Helpers;
 using SurveyBasket.BLL.Setting;
 
 namespace SurveyBasket.API.Infrastructure
@@ -95,9 +96,10 @@ namespace SurveyBasket.API.Infrastructure
         {
             services.AddHttpContextAccessor();
 
-            services.AddScoped<IAuthService, AuthService>();
             services.AddSingleton<IJwtProvider, JwtProvider>();
             services.AddScoped<ICurrentUserService, CurrentUserService>();
+            services.AddScoped<SendConfirmationEmailHelper>();
+            services.AddScoped<SendResetPasswordEmailHelper>();
 
             services.AddMediatR(cfg =>
                 cfg.RegisterServicesFromAssembly(typeof(GetAllPollsQueryHandler).Assembly));
@@ -307,7 +309,6 @@ namespace SurveyBasket.API.Infrastructure
                 .ValidateDataAnnotations()
                 .ValidateOnStart();
 
-            services.AddScoped<IImageService, ImageService>();
 
             return services;
         }
