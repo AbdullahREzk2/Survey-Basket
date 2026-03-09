@@ -53,6 +53,7 @@ namespace SurveyBasket.API.Infrastructure
                 () => mediator.Send(new SendNewPollNotificationCommand(null), CancellationToken.None),
                 Cron.Daily
             );
+            app.UseExceptionHandler();
             app.UseRateLimiter();
 
             app.UseAuthentication();
@@ -61,7 +62,6 @@ namespace SurveyBasket.API.Infrastructure
 
             app.MapControllers();
 
-            app.UseExceptionHandler();
 
             app.MapHealthChecks("health", new HealthCheckOptions
             {

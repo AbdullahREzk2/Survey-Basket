@@ -1,6 +1,8 @@
 ﻿using System.Threading.RateLimiting;
 using Microsoft.OpenApi;
 using SurveyBasket.API.Health;
+using SurveyBasket.BLL.Behaviors;
+using SurveyBasket.BLL.Features.Auth.Command.Register;
 using SurveyBasket.BLL.Features.Polls.Queries.GetAllPolls;
 using SurveyBasket.BLL.Helpers;
 using SurveyBasket.BLL.Setting;
@@ -104,6 +106,10 @@ namespace SurveyBasket.API.Infrastructure
             services.AddMediatR(cfg =>
                 cfg.RegisterServicesFromAssembly(typeof(GetAllPollsQueryHandler).Assembly));
 
+            services.AddTransient(typeof(IPipelineBehavior<,>), typeof(LoggingBehavior<,>));
+            services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationBehavior<,>));
+            services.AddTransient(typeof(IPipelineBehavior<,>), typeof(PerformanceBehavior<,>));
+
             return services;
         }
 
@@ -125,9 +131,7 @@ namespace SurveyBasket.API.Infrastructure
         // =========================
         private static IServiceCollection AddFluentValidation(this IServiceCollection services)
         {
-            services.AddFluentValidationAutoValidation();
-            services.AddFluentValidationClientsideAdapters();
-            services.AddValidatorsFromAssembly(typeof(PollRequestValidation).Assembly);
+            services.AddValidatorsFromAssembly(typeof(RegisterCommandValidator).Assembly);
             return services;
         }
 

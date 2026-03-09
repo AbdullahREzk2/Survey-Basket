@@ -1,4 +1,5 @@
 ﻿namespace SurveyBasket.BLL.Errors;
+
 public class GlobalExceptionsHandler : IExceptionHandler
 {
     private readonly ILogger<GlobalExceptionsHandler> _logger;
@@ -7,9 +8,26 @@ public class GlobalExceptionsHandler : IExceptionHandler
     {
         _logger = logger;
     }
+
     public async ValueTask<bool> TryHandleAsync(HttpContext httpContext, Exception exception, CancellationToken cancellationToken)
     {
-        _logger.LogError(exception, "Something Went Wrong :{ Message}", exception.Message);
+        _logger.LogError(exception, "Something Went Wrong: {Message}", exception.Message);
+
+        if (exception is FluentValidation.ValidationException validationException)
+        {
+            var validationProblemDetails = new
+            {
+                type = "https://tools.ietf.org/html/rfc9110#section-15.5.1",
+                title = "Validation Error",
+                status = StatusCodes.Status400BadRequest,
+                errors = validationException.Errors
+                    .Select(e => new { e.PropertyName, e.ErrorMessage })
+            };
+
+            httpContext.Response.StatusCode = StatusCodes.Status400BadRequest;
+            await httpContext.Response.WriteAsJsonAsync(validationProblemDetails, cancellationToken);
+            return true;
+        }
 
         var problemDetails = new ProblemDetails
         {
@@ -22,5 +40,4 @@ public class GlobalExceptionsHandler : IExceptionHandler
         await httpContext.Response.WriteAsJsonAsync(problemDetails, cancellationToken);
         return true;
     }
-
 }
