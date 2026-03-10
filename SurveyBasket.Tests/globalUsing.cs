@@ -1,0 +1,9 @@
+﻿global using FluentAssertions;
+global using Mapster;
+global using MapsterMapper;
+global using Moq;
+global using SurveyBasket.BLL.Contracts.Polls;
+global using SurveyBasket.BLL.Features.Polls.Queries.GetAllPolls;
+global using SurveyBasket.DAL.Entities;
+global using SurveyBasket.DAL.IRepository;
+global using Xunit;
