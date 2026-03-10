@@ -172,4 +172,5 @@ public class AddPollCommandHandlerTests
             Times.Once // ← repository must be called exactly once
         );
     }
+
 }
