@@ -1,5 +1,5 @@
 ﻿namespace SurveyBasket.BLL.Helpers;
-public  class SendConfirmationEmailHelper(IBackgroundJobClient backgroundJob, IOptions<AppURLSetting> appURL)
+public  class SendConfirmationEmailHelper(IBackgroundJobClient backgroundJob, IOptions<AppURLSetting> appURL) : ISendConfirmationEmailHelper
 {
     private readonly IBackgroundJobClient _backgroundjob = backgroundJob;
     private readonly AppURLSetting _appurl = appURL.Value;

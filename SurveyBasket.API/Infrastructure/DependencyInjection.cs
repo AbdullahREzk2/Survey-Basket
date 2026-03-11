@@ -100,8 +100,9 @@ namespace SurveyBasket.API.Infrastructure
 
             services.AddSingleton<IJwtProvider, JwtProvider>();
             services.AddScoped<ICurrentUserService, CurrentUserService>();
-            services.AddScoped<SendConfirmationEmailHelper>();
-            services.AddScoped<SendResetPasswordEmailHelper>();
+
+            services.AddScoped<ISendResetPasswordEmailHelper, SendResetPasswordEmailHelper>();
+            services.AddScoped<ISendConfirmationEmailHelper, SendConfirmationEmailHelper>();
 
             services.AddMediatR(cfg =>
                 cfg.RegisterServicesFromAssembly(typeof(GetAllPollsQueryHandler).Assembly));

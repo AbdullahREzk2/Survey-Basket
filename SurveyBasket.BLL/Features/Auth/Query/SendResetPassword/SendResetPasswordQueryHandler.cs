@@ -1,12 +1,12 @@
 ﻿namespace SurveyBasket.BLL.Features.Auth.Query.SendResetPassword;
 public class SendResetPasswordQueryHandler(
     IUserRepository userRepository,ILogger<SendResetPasswordQueryHandler> logger,
-    SendResetPasswordEmailHelper passwordEmailHelper
+    ISendResetPasswordEmailHelper passwordEmailHelper
     ) : IRequestHandler<SendResetPasswordQuery, Result>
 {
     private readonly IUserRepository _userrepository = userRepository;
     private readonly ILogger<SendResetPasswordQueryHandler> _logger = logger;
-    private readonly SendResetPasswordEmailHelper _passwordemailhelper = passwordEmailHelper;
+    private readonly ISendResetPasswordEmailHelper _passwordemailhelper = passwordEmailHelper;
 
     public async Task<Result> Handle(SendResetPasswordQuery request, CancellationToken cancellationToken)
     {

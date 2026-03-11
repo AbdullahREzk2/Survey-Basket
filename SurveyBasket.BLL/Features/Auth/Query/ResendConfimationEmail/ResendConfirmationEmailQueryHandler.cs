@@ -2,12 +2,12 @@
 public class ResendConfirmationEmailQueryHandler(
     IUserRepository userRepository,
     ILogger<ResendConfirmationEmailQueryHandler> logger,
-    SendConfirmationEmailHelper confirmationEmailHelper
+    ISendConfirmationEmailHelper confirmationEmailHelper
     ) : IRequestHandler<ResendConfirmationEmailQuery, Result>
 {
     private readonly IUserRepository _userrepository = userRepository;
     private readonly ILogger<ResendConfirmationEmailQueryHandler> _logger = logger;
-    private readonly SendConfirmationEmailHelper _confirmationemailhelper = confirmationEmailHelper;
+    private readonly ISendConfirmationEmailHelper _confirmationemailhelper = confirmationEmailHelper;
 
     public async Task<Result> Handle(ResendConfirmationEmailQuery request, CancellationToken cancellationToken)
     {

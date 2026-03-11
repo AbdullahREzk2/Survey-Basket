@@ -2,12 +2,12 @@
 public class RegisterCommandHandler(
     IUserRepository userRepository,
     ILogger<RegisterCommandHandler> logger,
-    SendConfirmationEmailHelper confirmationEmailHelper
+    ISendConfirmationEmailHelper confirmationEmailHelper
     ) : IRequestHandler<RegisterCommand, Result>
 {
     private readonly IUserRepository _userrepository = userRepository;
     private readonly ILogger<RegisterCommandHandler> _logger = logger;
-    private readonly SendConfirmationEmailHelper _confirmationemailhelper = confirmationEmailHelper;
+    private readonly ISendConfirmationEmailHelper _confirmationemailhelper = confirmationEmailHelper;
 
     public async Task<Result> Handle(RegisterCommand request, CancellationToken cancellationToken)
     {

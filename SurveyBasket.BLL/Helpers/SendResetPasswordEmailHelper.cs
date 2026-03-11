@@ -1,5 +1,5 @@
 ﻿namespace SurveyBasket.BLL.Helpers;
-public class SendResetPasswordEmailHelper(IBackgroundJobClient backgroundJob, IOptions<AppURLSetting> appURL)
+public class SendResetPasswordEmailHelper(IBackgroundJobClient backgroundJob, IOptions<AppURLSetting> appURL): ISendResetPasswordEmailHelper
 {
     private readonly IBackgroundJobClient _backgroundjob = backgroundJob;
     private readonly AppURLSetting _appurl = appURL.Value;
