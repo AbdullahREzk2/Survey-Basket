@@ -143,6 +143,7 @@ SurveyBasket/
 | Health Checks | AspNetCore.Diagnostics.HealthChecks |
 | Rate Limiting | ASP.NET Core Built-in Rate Limiter |
 | CQRS + MediatR | Feature-based request/response pipeline |
+| xUnit + Moq | Unit Testing — 62 passing tests |
 
 ### Design Patterns
 - ✅ Repository Pattern
@@ -152,6 +153,7 @@ SurveyBasket/
 - ✅ Background Job Pattern
 - ✅ CQRS Pattern (Commands & Queries)
 - ✅ Mediator Pattern (MediatR)
+- ✅ AAA Pattern (Unit Testing)
 
 
 
