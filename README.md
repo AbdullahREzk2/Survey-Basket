@@ -90,11 +90,13 @@
 - Mail service check
 - JSON health report endpoint
 
-### Testing
-| xUnit | Testing framework |
-| Moq | Mocking library |
-| FluentAssertions | Readable assertions |
-
+### 🧪 Testing
+- **62 unit tests** covering Polls and Auth features
+- **xUnit** as the testing framework
+- **Moq** for mocking dependencies
+- **FluentAssertions** for readable assertions
+- AAA pattern (Arrange, Act, Assert)
+- Positive and negative test cases for every handler
 ---
 
 ## 🏗️ Architecture
