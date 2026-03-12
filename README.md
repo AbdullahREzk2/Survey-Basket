@@ -90,6 +90,11 @@
 - Mail service check
 - JSON health report endpoint
 
+### Testing
+| xUnit | Testing framework |
+| Moq | Mocking library |
+| FluentAssertions | Readable assertions |
+
 ---
 
 ## 🏗️ Architecture
