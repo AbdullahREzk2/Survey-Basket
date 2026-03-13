@@ -184,4 +184,6 @@ public class ConfirmEmailCommandHandlerTests
         result.Error.Message.Should().Be("Token is invalid.");
         result.Error.StatusCode.Should().Be(400);
     }
+
+    //ttss
 }
