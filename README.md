@@ -90,6 +90,13 @@
 - Mail service check
 - JSON health report endpoint
 
+### 🧪 Testing
+- **62 unit tests** covering Polls and Auth features
+- **xUnit** as the testing framework
+- **Moq** for mocking dependencies
+- **FluentAssertions** for readable assertions
+- AAA pattern (Arrange, Act, Assert)
+- Positive and negative test cases for every handler
 ---
 
 ## 🏗️ Architecture
@@ -143,6 +150,7 @@ SurveyBasket/
 | Health Checks | AspNetCore.Diagnostics.HealthChecks |
 | Rate Limiting | ASP.NET Core Built-in Rate Limiter |
 | CQRS + MediatR | Feature-based request/response pipeline |
+| xUnit + Moq | Unit Testing — 62 passing tests |
 
 ### Design Patterns
 - ✅ Repository Pattern
@@ -152,6 +160,7 @@ SurveyBasket/
 - ✅ Background Job Pattern
 - ✅ CQRS Pattern (Commands & Queries)
 - ✅ Mediator Pattern (MediatR)
+- ✅ AAA Pattern (Unit Testing)
 
 
 
