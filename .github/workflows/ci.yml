@@ -39,6 +39,8 @@ jobs:
           password: ${{ secrets.FTP_PASSWORD }}
           local-dir: ./publish/
           server-dir: /wwwroot/
+          dangerous-clean-slate: false
+          log-level: verbose  
 
       - name: Send Success Email
         if: success()
