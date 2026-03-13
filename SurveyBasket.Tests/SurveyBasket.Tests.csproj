@@ -16,7 +16,7 @@
     <Content Include="Templete\ResetPassword.html">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Templete\Welcome.Html">
+    <Content Include="Templete\Welcome.html">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
