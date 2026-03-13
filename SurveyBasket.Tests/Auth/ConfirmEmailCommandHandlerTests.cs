@@ -57,7 +57,7 @@ public class ConfirmEmailCommandHandlerTests
             .ReturnsAsync(IdentityResult.Success);
 
         _sendEmailMock
-            .Setup(x => x.sendEmail(user))
+            .Setup(x => x.sendEmail(It.IsAny<ApplicationUser>()))
             .Returns(Task.CompletedTask);
 
         _userRepositoryMock
