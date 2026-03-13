@@ -1,6 +1,4 @@
-﻿using System.Linq.Dynamic.Core.Tokenizer;
-using System.Linq.Expressions;
-using System.Text;
+﻿using System.Text;
 using Hangfire;
 using Hangfire.Common;
 using Hangfire.States;
@@ -9,6 +7,7 @@ using Microsoft.AspNetCore.WebUtilities;
 using SurveyBasket.BLL.Contracts.Authantication;
 using SurveyBasket.BLL.Errors;
 using SurveyBasket.BLL.Features.Auth.Command.ConfirmEmail;
+using SurveyBasket.BLL.Helpers;
 using SurveyBasket.DAL.seedData;
 
 namespace SurveyBasket.Tests.Auth;
@@ -16,15 +15,18 @@ public class ConfirmEmailCommandHandlerTests
 {
     private readonly Mock<IUserRepository> _userRepositoryMock;
     private readonly Mock<IBackgroundJobClient> _backgroundJobMock;
+    private readonly Mock<IsendWelcomeEmail> _sendEmailMock;
     private readonly ConfirmEmailCommandHandler _handler;
 
     public ConfirmEmailCommandHandlerTests()
     {
         _userRepositoryMock = new Mock<IUserRepository>();
         _backgroundJobMock = new Mock<IBackgroundJobClient>();
+        _sendEmailMock = new Mock<IsendWelcomeEmail>();
         _handler = new ConfirmEmailCommandHandler(
             _userRepositoryMock.Object,
-            _backgroundJobMock.Object
+            _backgroundJobMock.Object,
+            _sendEmailMock.Object
             );
     }
 
@@ -53,6 +55,10 @@ public class ConfirmEmailCommandHandlerTests
         _userRepositoryMock
             .Setup(x => x.ConfirmEmailAsync(user,originalCode))
             .ReturnsAsync(IdentityResult.Success);
+
+        _sendEmailMock
+            .Setup(x => x.sendEmail(user))
+            .Returns(Task.CompletedTask);
 
         _userRepositoryMock
             .Setup(x => x.AddToRoleAsync(user, defaultRoles.Member.Name))

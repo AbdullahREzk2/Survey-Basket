@@ -1,8 +1,9 @@
 ﻿namespace SurveyBasket.BLL.Features.Auth.Command.ConfirmEmail;
-public class ConfirmEmailCommandHandler(IUserRepository userRepository,IBackgroundJobClient backgroundJob) : IRequestHandler<ConfirmEmailCommand, Result>
+public class ConfirmEmailCommandHandler(IUserRepository userRepository,IBackgroundJobClient backgroundJob,IsendWelcomeEmail isendWelcome) : IRequestHandler<ConfirmEmailCommand, Result>
 {
     private readonly IUserRepository _userrepository = userRepository;
     private readonly IBackgroundJobClient _backgroundjob = backgroundJob;
+    private readonly IsendWelcomeEmail _isendwelcome = isendWelcome;
 
     public async Task<Result> Handle(ConfirmEmailCommand request, CancellationToken cancellationToken)
     {
@@ -27,7 +28,7 @@ public class ConfirmEmailCommandHandler(IUserRepository userRepository,IBackgrou
         var result = await _userrepository.ConfirmEmailAsync(user, code);
         if (result.Succeeded)
         {
-            await sendWelcomeEmail(user);
+            await _isendwelcome.sendEmail(user);
             await _userrepository.AddToRoleAsync(user, defaultRoles.Member.Name);
             return Result.Success();
         }
@@ -35,13 +36,6 @@ public class ConfirmEmailCommandHandler(IUserRepository userRepository,IBackgrou
         var error = result.Errors.First();
         return Result.Failure(new Error(error.Code, error.Description, StatusCodes.Status400BadRequest));
     }
-    private async Task sendWelcomeEmail(ApplicationUser user)
-    {
-        var emailBody = EmailBodyBuilder.GenerateEmailBody("Welcome",
-            new Dictionary<string, string> { { "{{UserName}}", user.firstName } });
-        _backgroundjob.Enqueue<IEmailSender>(x =>
-            x.SendEmailAsync(user.Email!, "👋 Survey Basket : Welcome Email", emailBody));
-        await Task.CompletedTask;
-    }
+    
 
 }

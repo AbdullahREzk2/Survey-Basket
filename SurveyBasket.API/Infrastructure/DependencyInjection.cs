@@ -103,6 +103,7 @@ namespace SurveyBasket.API.Infrastructure
 
             services.AddScoped<ISendResetPasswordEmailHelper, SendResetPasswordEmailHelper>();
             services.AddScoped<ISendConfirmationEmailHelper, SendConfirmationEmailHelper>();
+            services.AddScoped<IsendWelcomeEmail, sendWelcomeEmail>();
 
             services.AddMediatR(cfg =>
                 cfg.RegisterServicesFromAssembly(typeof(GetAllPollsQueryHandler).Assembly));
