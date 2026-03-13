@@ -1,6 +1,7 @@
 <div align="center">
 
 # 🗳️ SurveyBasket API
+[![Build and Test](https://github.com/AbdullahREzk2/Survey-Basket/actions/workflows/ci.yml/badge.svg)](https://github.com/AbdullahREzk2/Survey-Basket/actions/workflows/ci.yml)
 
 **A production-ready polling system backend built with ASP.NET Core Web API**
 
