@@ -26,9 +26,57 @@ jobs:
         run: dotnet build --no-restore --configuration Release
 
       - name: Test
-        run: dotnet test --configuration Release
+        run: dotnet test --configuration Release --verbosity normal
 
+      - name: Publish
+        run: dotnet publish --configuration Release --output ./publish
 
+      - name: Deploy via FTP
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
+        with:
+          server: ${{ secrets.FTP_HOST }}
+          username: ${{ secrets.FTP_USERNAME }}
+          password: ${{ secrets.FTP_PASSWORD }}
+          local-dir: ./publish/
+          server-dir: ${{ secrets.FTP_PATH }}/
 
+      - name: Send Success Email
+        if: success()
+        uses: dawidd6/action-send-mail@v3
+        with:
+          server_address: smtp.gmail.com
+          server_port: 465
+          username: ${{ secrets.EMAIL_USERNAME }}
+          password: ${{ secrets.EMAIL_PASSWORD }}
+          subject: "✅ SurveyBasket — Build & Deploy Successful!"
+          body: |
+            🎉 Build, tests and deployment passed successfully!
 
+            Branch: ${{ github.ref_name }}
+            Commit: ${{ github.sha }}
+            Pushed by: ${{ github.actor }}
 
+            ✅ 62 tests passed
+            🚀 Deployed to production
+          to: abdullahelkashlan@gmail.com
+          from: SurveyBasket CI
+
+      - name: Send Failure Email
+        if: failure()
+        uses: dawidd6/action-send-mail@v3
+        with:
+          server_address: smtp.gmail.com
+          server_port: 465
+          username: ${{ secrets.EMAIL_USERNAME }}
+          password: ${{ secrets.EMAIL_PASSWORD }}
+          subject: "❌ SurveyBasket — Build Failed!"
+          body: |
+            💥 Something went wrong!
+
+            Branch: ${{ github.ref_name }}
+            Commit: ${{ github.sha }}
+            Pushed by: ${{ github.actor }}
+
+            Please check the logs on GitHub Actions.
+          to: abdullahelkashlan@gmail.com
+          from: SurveyBasket CI
