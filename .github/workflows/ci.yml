@@ -38,7 +38,7 @@ jobs:
           username: ${{ secrets.FTP_USERNAME }}
           password: ${{ secrets.FTP_PASSWORD }}
           local-dir: ./publish/
-          server-dir: ${{ secrets.FTP_PATH }}/
+          server-dir: /wwwroot/
 
       - name: Send Success Email
         if: success()
